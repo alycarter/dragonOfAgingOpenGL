@@ -1,0 +1,63 @@
+package com.alycarter.dragonOfAging.game.object.state.level.entity;
+
+import com.alycarter.dragonOfAging.game.controls.Controls;
+import com.alycarter.dragonOfAging.game.graphics.Graphics;
+import com.alycarter.dragonOfAging.game.math.Vector3;
+import com.alycarter.dragonOfAging.game.object.GameObject;
+import com.alycarter.dragonOfAging.game.object.state.level.Level;
+
+public abstract class Entity extends GameObject {
+	
+	//position in the world
+	private Vector3 position;
+	//size of the bounding box
+	private Vector3 boundingBox;
+	//what type of entity it is
+	private String entityType;
+	// does this collide with entities
+	private boolean collidesWithEntities;
+	
+	public Entity(String name, String type, float x, float y, float z, float width, float depth, float height, boolean collidesWithEntities) {
+		super(name);
+		entityType = type;
+		position = new Vector3(x, y, z);
+		boundingBox = new Vector3(width, depth, height);
+		this.collidesWithEntities = collidesWithEntities;
+	}
+
+	public abstract void update(Level level, Controls controls);
+	
+	public abstract void render(Graphics graphics, float unitResolution, float renderOffsetX, float renderOffsetY);
+	
+	public Vector3 getPosition(){
+		return position;
+	}
+	
+	public Vector3 getBoundingBox(){
+		return boundingBox;
+	}
+	
+	public String getEntityType(){
+		return entityType;
+	}
+	
+	public boolean collidesWithEntities(){
+		return collidesWithEntities;
+	}
+	
+	public boolean isCollidingWithEntity(Entity e){
+		if(e != this && collidesWithEntities && e.collidesWithEntities){
+			float xDistance = Math.abs(getPosition().getX() - e.getPosition().getX());
+			float yDistance = Math.abs(getPosition().getY() - e.getPosition().getY());
+			float zDistance = Math.abs(getPosition().getZ() - e.getPosition().getZ());
+			if(xDistance < (getBoundingBox().getX()/2.0f) + (e.getBoundingBox().getX()/2.0f) &&
+						yDistance < (getBoundingBox().getY()/2.0f) + (e.getBoundingBox().getY()/2.0f) &&
+						zDistance < (getBoundingBox().getZ()/2.0f) + (e.getBoundingBox().getZ()/2.0f)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public abstract void onCollision(Entity e);
+}

@@ -1,0 +1,16 @@
+possible engine changes:
+
+using the projection matrix to move the camera position
+
+using the depth buffer to avoid entity and particle z sorting
+
+make use of the alpha blending and alpha test to allow transparent textures that work with the depth buffer
+
+may have to enable clearing the depth buffer bit
+
+having seprate layers (projection marticies) for the game world rendering and ui rendering
+
+using the glscale function to avoid having to times everything by unit resolition
+
+possibly being able to have a set camera and clear camera function that pushes and pops a new layer on the projection stack with the scale and position to stop having to recreate the ortho projection each time we switch to ui rendering
+
