@@ -43,7 +43,7 @@ public abstract class DynamicEntity extends Entity {
 
 	public abstract void onUpdate(Level level, Controls controls);
 	
-	public abstract void onRender(Graphics graphics, float unitResolution, float renderOffsetX, float renderOffsetY);
+	public abstract void onRender(Graphics graphics);
 	
 	@Override
 	public void update(Level level, Controls controls) {
@@ -92,11 +92,10 @@ public abstract class DynamicEntity extends Entity {
 	}
 	
 	@Override
-	public void render(Graphics graphics, float unitResolution, float renderOffsetX, float renderOffsetY) {
-		onRender(graphics, unitResolution, renderOffsetX, renderOffsetY);
-		graphics.drawImage(shadow.getTileTextureID(0), (getPosition().getX()*unitResolution)+renderOffsetX,
-				(getPosition().getY()*unitResolution)+renderOffsetY, getBoundingBox().getX()*unitResolution, getBoundingBox().getY()*unitResolution, 0);
-		sprite.render(graphics, getPosition().getX(), getPosition().getY()-getPosition().getZ(), renderOffsetX, renderOffsetY, unitResolution);
+	public void render(Graphics graphics) {
+		onRender(graphics);
+		graphics.drawImage(shadow.getTileTextureID(0), getPosition().getX(),getPosition().getY(), getBoundingBox().getX(), getBoundingBox().getY(), 0);
+		sprite.render(graphics, getPosition().getX(), getPosition().getY()-getPosition().getZ());
 	}
 	
 	private void handleEntityCollisions(ArrayList<Entity> entities){

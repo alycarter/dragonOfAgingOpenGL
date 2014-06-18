@@ -110,6 +110,21 @@ public class Graphics {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT| GL11.GL_DEPTH_BUFFER_BIT);
 	}
 	
+	public void enableWorldCamera(float cameraX, float cameraY, float unitResolution){
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glPushMatrix();
+			GL11.glTranslatef((float)resolution.getX()/2.0f, (float)resolution.getY()/2.0f, 0);
+			GL11.glScalef(unitResolution, unitResolution, unitResolution);
+			GL11.glTranslatef(-cameraX, -cameraY, 0);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+	}
+	
+	public void disableWorldCamera(){
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glPopMatrix();
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+	}
+	
 	public void drawRectangle(FloatColor color, float x, float y, float width, float height, float rotation){
 		//set the colour of the rectangle
 		GL11.glColor4f(color.getR(), color.getG(), color.getB(), color.getA());

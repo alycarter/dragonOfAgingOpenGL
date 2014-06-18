@@ -19,8 +19,7 @@ public class ItemPickup extends Entity {
 	}
 
 	@Override
-	public void render(Graphics graphics, float unitResolution,
-			float renderOffsetX, float renderOffsetY) {
+	public void render(Graphics graphics) {
 		// TODO Auto-generated method stub
 
 	}

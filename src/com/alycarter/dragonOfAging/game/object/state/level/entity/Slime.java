@@ -73,8 +73,7 @@ public class Slime extends DynamicEntity {
 	}
 
 	@Override
-	public void onRender(Graphics graphics, float unitResolution,
-			float renderOffsetX, float renderOffsetY) {
+	public void onRender(Graphics graphics) {
 		// TODO Auto-generated method stub
 		
 	}

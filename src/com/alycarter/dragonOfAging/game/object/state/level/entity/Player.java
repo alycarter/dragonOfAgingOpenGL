@@ -70,7 +70,7 @@ public class Player extends DynamicEntity {
 	}
 
 	@Override
-	public void onRender(Graphics graphics, float unitResolution, float renderOffsetX, float renderOffsetY) {
+	public void onRender(Graphics graphics) {
 		//calculate animation to use
 		double angle = Math.toDegrees(Math.atan2(direction.getX(), direction.getY()));
 		angle+=180;

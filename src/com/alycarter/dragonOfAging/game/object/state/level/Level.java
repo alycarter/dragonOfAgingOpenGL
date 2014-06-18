@@ -119,24 +119,23 @@ public class Level extends State {
 		float right = camera.getPosition().getX() + (float)(graphics.getResolution().getX()/2/unitResolution); 
 		float top = camera.getPosition().getY() - (float)(graphics.getResolution().getY()/2/unitResolution); 
 		float down = camera.getPosition().getY() + (float)(graphics.getResolution().getY()/2/unitResolution); 
-		//place holder camera will break if player is not at position 0
-		float x = -camera.getPosition().getX()*unitResolution;
-		float y = -camera.getPosition().getY()*unitResolution;
-		x+=graphics.getResolution().getX()/2;
-		y+=graphics.getResolution().getY()/2;
-	
+		
+		//start world drawing
+		graphics.enableWorldCamera(camera.getPosition().getX(), camera.getPosition().getY(), unitResolution);
 		//need to sort the entities by depth//
 		sortEntities();
 		//draw the map
 		int mapLayer = 0;
 		int entity = 0;
 		for(mapLayer =(int)Math.floor(top); mapLayer < Math.ceil(down)+1; mapLayer++){
-			map.renderLayer(graphics,mapLayer, left, right, unitResolution, x, y);
+			map.renderLayer(graphics, mapLayer, left, right);
 			while(entity < entities.size() && entities.get(entity).getPosition().getY() < mapLayer+1){
-				entities.get(entity).render(graphics, unitResolution, x, y);
+				entities.get(entity).render(graphics);
 				entity++;
 			}
 		}
+		graphics.disableWorldCamera();
+		//end world drawing
 		//render ui objects here
 	}
 	

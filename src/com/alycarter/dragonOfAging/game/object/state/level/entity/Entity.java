@@ -27,7 +27,7 @@ public abstract class Entity extends GameObject {
 
 	public abstract void update(Level level, Controls controls);
 	
-	public abstract void render(Graphics graphics, float unitResolution, float renderOffsetX, float renderOffsetY);
+	public abstract void render(Graphics graphics);
 	
 	public Vector3 getPosition(){
 		return position;
