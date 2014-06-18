@@ -122,7 +122,7 @@ public class Sprite {
 		float y = worldPositionY + imageOffSet.y;
 		ArrayList<Integer> frameIDs = getFrameTextureIDs();
 		for(int i = 0; i < frameIDs.size(); i++){
-			graphics.drawImage(frameIDs.get(i), x, y, depth+(i/100), imageSize.x, imageSize.y, 0.0f);
+			graphics.drawImage(frameIDs.get(i), x, y, depth+(i*0.001f), imageSize.x, imageSize.y, 0.0f);
 		}
 	}
 }

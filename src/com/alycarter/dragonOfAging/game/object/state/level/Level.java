@@ -122,24 +122,24 @@ public class Level extends State {
 		
 		//start world drawing
 		graphics.enableWorldCamera(camera.getPosition().getX(), camera.getPosition().getY(), unitResolution);
-		//need to sort the entities by depth//
-		sortEntities();
+		
+		//need to sort the entities by depth//removed for depth testing purposes
+		//sortEntities();
+		
 		//draw the map
 		int mapLayer = 0;
-		int entity = 0;
-		for(mapLayer =(int)Math.floor(top); mapLayer < Math.ceil(down)+1; mapLayer++){
+		for(mapLayer =(int)Math.ceil(down); mapLayer > Math.floor(top)-1; mapLayer--){
 			map.renderLayer(graphics, mapLayer, left, right);
-			while(entity < entities.size() && entities.get(entity).getPosition().getY() < mapLayer+1){
-				entities.get(entity).render(graphics);
-				entity++;
-			}
+		}
+		for(int i = 0;i < entities.size(); i++){
+			entities.get(i).render(graphics);
 		}
 		graphics.disableWorldCamera();
 		//end world drawing
 		//render ui objects here
 	}
 	
-	private void sortEntities(){
+	/*private void sortEntities(){
 		for(int i =1; i < entities.size(); i++){
 			int j = i;
 			while( j > 0 && entities.get(j).getPosition().getY() < entities.get(j-1).getPosition().getY()){
@@ -149,7 +149,7 @@ public class Level extends State {
 				j--;
 			}
 		}
-	}
+	}*/
 	
 	public ArrayList<Entity> getEntities(){
 		return entities;
