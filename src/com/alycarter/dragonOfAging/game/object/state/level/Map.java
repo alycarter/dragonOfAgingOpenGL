@@ -87,7 +87,7 @@ public class Map {
 			FloatColor color = new FloatColor(value, value, value, 1.0f);
 			float xPos = x + 0.5f;
 			float yPos = depthLayer + 1.0f - height;
-			graphics.drawImage(mapTexture.getTileTextureID(0),color, xPos, yPos, 1, 2, 0);
+			graphics.drawImage(mapTexture.getTileTextureID(0),color, xPos, yPos, depthLayer, 1, 2, 0);
 		}	
 	}
 	

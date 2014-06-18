@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.alycarter.dragonOfAging.game.controls.Controls;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.Sprite;
-import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
 import com.alycarter.dragonOfAging.game.math.Vector3;
 import com.alycarter.dragonOfAging.game.object.state.level.Level;
 import com.alycarter.dragonOfAging.game.object.state.level.Map;
@@ -26,13 +25,10 @@ public abstract class DynamicEntity extends Entity {
 	
 	private Sprite sprite;
 	
-	private TiledTexture shadow;
-	
 	public DynamicEntity(Level level, String name, String type, float x, float y, float z,
 			float width, float depth, float height, float imageWidth, float imageHeight, boolean collidesWithEntities) {
 		super(name, type, x, y, z, width, depth, height, collidesWithEntities);
 		sprite = new Sprite(imageWidth, imageHeight, 0, imageHeight/-2.0f);
-		shadow = level.getTiledTexture("shadow");
 		velocity = new Vector3(0, 0, 0);
 		drag = 4.0f;
 		weight = 50.0f;
@@ -94,8 +90,7 @@ public abstract class DynamicEntity extends Entity {
 	@Override
 	public void render(Graphics graphics) {
 		onRender(graphics);
-		graphics.drawImage(shadow.getTileTextureID(0), getPosition().getX(),getPosition().getY(), getBoundingBox().getX(), getBoundingBox().getY(), 0);
-		sprite.render(graphics, getPosition().getX(), getPosition().getY()-getPosition().getZ());
+		sprite.render(graphics, getPosition().getX(), getPosition().getY()-getPosition().getZ(), getPosition().getY());
 	}
 	
 	private void handleEntityCollisions(ArrayList<Entity> entities){

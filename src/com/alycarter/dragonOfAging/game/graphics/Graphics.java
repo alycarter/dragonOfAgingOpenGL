@@ -39,11 +39,16 @@ public class Graphics {
 		//allow transparency
 		GL11.glEnable(GL11.GL_BLEND); 
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		//allow depth testing
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		//allow alpha depth testing
+		GL11.glAlphaFunc(GL11.GL_GREATER, 0.5f);
+		GL11.glEnable(GL11.GL_ALPHA_TEST);
 		//set up the projection matrix to work in screen coordinates and put it on the stack
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glPushMatrix();
 			GL11.glLoadIdentity();
-			GL11.glOrtho(0, resolution.getX(), resolution.getY(), 0, 1, -1);
+			GL11.glOrtho(0, resolution.getX(), resolution.getY(), 0, 1000, -1000);
 		//swap back to model view ready to draw to the screen
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
 	}
@@ -114,7 +119,7 @@ public class Graphics {
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glPushMatrix();
 			GL11.glTranslatef((float)resolution.getX()/2.0f, (float)resolution.getY()/2.0f, 0);
-			GL11.glScalef(unitResolution, unitResolution, unitResolution);
+			GL11.glScalef(unitResolution, unitResolution, -1);
 			GL11.glTranslatef(-cameraX, -cameraY, 0);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 	}
@@ -125,7 +130,7 @@ public class Graphics {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 	}
 	
-	public void drawRectangle(FloatColor color, float x, float y, float width, float height, float rotation){
+	public void drawRectangle(FloatColor color, float x, float y, float z, float width, float height, float rotation){
 		//set the colour of the rectangle
 		GL11.glColor4f(color.getR(), color.getG(), color.getB(), color.getA());
 		//add a matrix to the stack
@@ -133,11 +138,11 @@ public class Graphics {
 			//load the identity matrix
 			GL11.glLoadIdentity();
 			//move to the rectangles position
-			GL11.glTranslatef(x, y, 0.0f);
+			GL11.glTranslatef(x, y, z);
 			//rotate the rectangle
 			GL11.glRotatef(rotation, 0.0f, 0.0f, 1.0f);
 			//scale the rectangle to the right size
-			GL11.glScalef(width, height, 0);
+			GL11.glScalef(width, height, 1);
 			//draw our rectangle
 			quad.drawMesh();
 		//pop the matrix off the stack
@@ -146,27 +151,27 @@ public class Graphics {
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	
-	public void drawImage(int textureID, FloatColor color, float x, float y, float width, float height, float rotation){
+	public void drawImage(int textureID, FloatColor color, float x, float y, float z, float width, float height, float rotation){
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		if(textureID >= 0 && textureID < textures.size()){
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures.get(textureID).getTextureID());
 		}else{
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures.get(invalidTextureID).getTextureID());
 		}
-		drawRectangle(color, x, y, width, height, rotation);
+		drawRectangle(color, x, y, z, width, height, rotation);
 		
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 	}
 	
-	public void drawImage(int textureID, float x, float y, float width, float height, float rotation){
+	public void drawImage(int textureID, float x, float y, float z, float width, float height, float rotation){
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		if(textureID >= 0 && textureID < textures.size()){
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures.get(textureID).getTextureID());
 		}else{
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures.get(invalidTextureID).getTextureID());
 		}
-		drawRectangle(FloatColor.WHITE, x, y, width, height, rotation);
+		drawRectangle(FloatColor.WHITE, x, y, z, width, height, rotation);
 		
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);

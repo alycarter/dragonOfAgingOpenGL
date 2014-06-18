@@ -117,12 +117,12 @@ public class Sprite {
 		return imageOffSet;
 	}
 	
-	public void render(Graphics graphics, float worldPositionX, float worldPositionY){
+	public void render(Graphics graphics, float worldPositionX, float worldPositionY, float depth){
 		float x = worldPositionX + imageOffSet.x;
 		float y = worldPositionY + imageOffSet.y;
 		ArrayList<Integer> frameIDs = getFrameTextureIDs();
 		for(int i = 0; i < frameIDs.size(); i++){
-			graphics.drawImage(frameIDs.get(i), x, y, imageSize.x, imageSize.y, 0.0f);
+			graphics.drawImage(frameIDs.get(i), x, y, depth+(i/100), imageSize.x, imageSize.y, 0.0f);
 		}
 	}
 }
