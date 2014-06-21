@@ -59,5 +59,9 @@ public abstract class Entity extends GameObject {
 		return false;
 	}
 	
+	public boolean isOnScreen(float top, float bottom, float left, float right){
+		return true;
+	}
+	
 	public abstract void onCollision(Entity e);
 }

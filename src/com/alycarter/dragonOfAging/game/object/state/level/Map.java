@@ -85,8 +85,11 @@ public class Map {
 	}
 	
 	public void render(Graphics graphics, float left, float right, float top, float bottom){
-		float tilesHigh = bottom - top;
-		float tilesWide = right - left;
+		renderTexture(graphics, left, right, top, bottom);
+		renderShadows(graphics, left, right, top, bottom);
+	}
+	
+	private void renderTexture(Graphics graphics, float left, float right, float top, float bottom){
 		graphics.bindTexture(mapTexture.getTileTextureID(0));
 		for(int y =(int)Math.ceil(bottom); y > Math.floor(top)-1; y--){	
 			for(int x = (int) Math.floor(left); x < Math.ceil(right); x++){
@@ -98,6 +101,12 @@ public class Map {
 				graphics.drawRectangle(color, xPos, yPos+0.5f, y, 1, 2, 0);
 			}	
 		}
+		graphics.unBindTexture();
+	}
+	
+	private void renderShadows(Graphics graphics, float left, float right, float top, float bottom){
+		float tilesHigh = bottom - top;
+		float tilesWide = right - left;
 		graphics.bindTexture(shadow);
 		GL11.glMatrixMode(GL11.GL_TEXTURE);
 		GL11.glPushMatrix();
@@ -113,7 +122,7 @@ public class Map {
 						graphics.drawRectangle(xPos, yPos, y+0.01f, 1, 1, 0);
 						GL11.glMatrixMode(GL11.GL_TEXTURE);
 						GL11.glTranslatef(0, 1.0f, 0);
-						GL11.glScalef(1, 1.0f/(tilesHigh*4), 1);
+						GL11.glScalef(1, 1.0f/(tilesHigh*16), 1);
 						GL11.glMatrixMode(GL11.GL_MODELVIEW);
 						graphics.drawRectangle(xPos, yPos+1, y+0.01f, 1, 1, 0);
 						GL11.glMatrixMode(GL11.GL_TEXTURE);

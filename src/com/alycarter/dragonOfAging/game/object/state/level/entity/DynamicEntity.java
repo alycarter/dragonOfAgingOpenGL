@@ -142,6 +142,13 @@ public abstract class DynamicEntity extends Entity {
 		}
 	}
 	
+	public boolean isOnScreen(float top, float bottom, float left, float right){
+		return (((getPosition().getY()+getPosition().getZ()+(getBoundingBox().getY()/2)) > top) &&
+				((getPosition().getY() - getPosition().getZ() - sprite.getImageSize().getY()) < bottom) &&
+				((getPosition().getX()+sprite.getImageSize().x > left)) &&
+				((getPosition().getX()-sprite.getImageSize().x < right)));
+	}
+	
 	private float getMaxGroundHeight(Map map, float hitBoxX, float hitBoxY, float hitBoxWidth,float hitBoxHeight){
 		float height = 0;
 		for(int x = (int) Math.floor(hitBoxX - (hitBoxWidth/2)); x <= Math.floor(hitBoxX + (hitBoxWidth/2)); x++){

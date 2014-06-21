@@ -73,10 +73,8 @@ public class Level extends State {
 		player = new Player(this,(float)map.getSize().getX()/2.0f, (float)map.getSize().getY()/2.0f);
 		entities.add(player);
 		camera = new Camera(player.getPosition());
-		for(int x = 0; x < 10; x++){
-			for(int y = 0; y < 10; y++){
-				entities.add(new Slime(this, player.getPosition().getX(), player.getPosition().getY(), 1));
-			}	
+		for(int i = 0; i < 100; i++){
+			entities.add(new Slime(this, player.getPosition().getX(), player.getPosition().getY(), 1));
 		}
 	}
 
@@ -145,11 +143,12 @@ public class Level extends State {
 		//need to sort the entities by depth//removed for depth testing purposes
 		//sortEntities();
 		for(int i = 0;i < entities.size(); i++){
-			entities.get(i).render(graphics);
+			if(entities.get(i).isOnScreen(top, bottom, left, right)){
+				entities.get(i).render(graphics);				
+			}
 		}
-		
 		//draw shadows to texture
-		drawShadows(graphics);
+		drawShadows(graphics,top,bottom,left,right);
 		//draw the map
 		map.render(graphics, left, right, top, bottom);
 		//end world drawing
@@ -157,16 +156,18 @@ public class Level extends State {
 		//render ui objects here
 	}
 	
-	private void drawShadows(Graphics graphics){
+	private void drawShadows(Graphics graphics, float top, float bottom, float left, float right){
 		graphics.bindToFrameBuffer(shadowBuffer);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		//draw shadows
 		//GL11.glDisable(GL11.GL_DEPTH_TEST);
 		graphics.bindTexture(shadow);
 		for(int i = 0;i < entities.size(); i++){
-			float y = entities.get(i).getPosition().getY();
-			graphics.drawRectangle(entities.get(i).getPosition().getX(), y, 0,
-					entities.get(i).getBoundingBox().getX(), entities.get(i).getBoundingBox().getY(), 0);
+			if(entities.get(i).isOnScreen(top, bottom, left, right)){
+				float y = entities.get(i).getPosition().getY();
+				graphics.drawRectangle(entities.get(i).getPosition().getX(), y, 0,
+						entities.get(i).getBoundingBox().getX(), entities.get(i).getBoundingBox().getY(), 0);
+			}
 		}
 		graphics.unBindTexture();
 		//GL11.glEnable(GL11.GL_DEPTH_TEST);
