@@ -87,25 +87,26 @@ public class Map {
 	public void render(Graphics graphics, float left, float right, float top, float bottom){
 		float tilesHigh = bottom - top;
 		float tilesWide = right - left;
-		for(int y =(int)Math.ceil(bottom); y > Math.floor(top)-1; y--){	
-			for(int x = (int) Math.floor(left); x < Math.ceil(right); x++){
-				float height = getHeight(x, y);
-				float value = 1-(height/1.5f);
-				FloatColor color = new FloatColor(value, value, value, 1.0f);
-				float xPos = x + 0.5f;
-				float yPos = y + 0.5f - height;
-				graphics.drawImage(mapTexture.getTileTextureID(0),color, xPos, yPos+0.5f, y, 1, 2, 0);
-				GL11.glMatrixMode(GL11.GL_TEXTURE);
+		GL11.glMatrixMode(GL11.GL_TEXTURE);
+		GL11.glPushMatrix();
+			GL11.glScalef(1.0f/tilesWide, 1.0f/tilesHigh, 1);
+			for(float y = -0.5f; y < Math.ceil(tilesHigh); y++){	
 				GL11.glPushMatrix();
-					GL11.glScalef(1.0f/(tilesWide), (1.0f/(tilesHigh))*-1, 1);
-					GL11.glTranslatef(x-left, y-top, 0);
-					GL11.glMatrixMode(GL11.GL_MODELVIEW);
-					graphics.drawImage(shadow,color, xPos, yPos, y+0.01f, 1, 1, 0);
-					GL11.glMatrixMode(GL11.GL_TEXTURE);
+					for(float x = 0; x < Math.ceil(tilesWide); x++){
+						float height = getHeight((int)(x+left), (int)(y+top));
+						float xPos = x + left + 0.5f;
+						float yPos = y + top + 1.0f - height;
+						GL11.glMatrixMode(GL11.GL_MODELVIEW);
+						graphics.drawImage(shadow, xPos, yPos, y+0.01f, 1, 2, 0);
+						GL11.glMatrixMode(GL11.GL_TEXTURE);
+						GL11.glTranslatef(1, 0, 0);
+					}	
 				GL11.glPopMatrix();
-				GL11.glMatrixMode(GL11.GL_MODELVIEW);
-			}	
-		}
+				GL11.glTranslatef(0, 2, 0);
+			}
+			GL11.glMatrixMode(GL11.GL_TEXTURE);
+		GL11.glPopMatrix();
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 	}
 	
 	public Point getSize(){
