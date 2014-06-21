@@ -96,12 +96,10 @@ public class Map {
 			graphics.drawImage(mapTexture.getTileTextureID(0),color, xPos, yPos+0.5f, depthLayer, 1, 2, 0);
 			GL11.glMatrixMode(GL11.GL_TEXTURE);
 			GL11.glPushMatrix();
-				System.out.println(x +" "+ depthLayer);
 				GL11.glScalef(1.0f/(tilesWide), (1.0f/(tilesHigh))*-1, 1);
 				GL11.glTranslatef(x-left, depthLayer-top, 0);
 				GL11.glMatrixMode(GL11.GL_MODELVIEW);
 				graphics.drawImage(shadow,color, xPos, yPos, depthLayer+0.01f, 1, 1, 0);
-			//graphics.drawImage(mapTexture.getTileTextureID(0),color, xPos, yPos, depthLayer, 1, 2, 0);
 				GL11.glMatrixMode(GL11.GL_TEXTURE);
 			GL11.glPopMatrix();
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);

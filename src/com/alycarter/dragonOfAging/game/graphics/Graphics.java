@@ -34,7 +34,7 @@ public class Graphics {
 		setUpMatrices();
 		setUpQuad();
 		setUpTextures();
-		frameBufferID= GL30.glGenFramebuffers();
+		System.out.println(GL11.glGetError());
 	}
 	
 	private void setUpMatrices(){
@@ -84,9 +84,11 @@ public class Graphics {
 		indexBuffer.flip();
 		//load the vertex buffers into the mesh
 		quad = new Mesh(indexBuffer, vertexBuffer, textureBuffer);
+		quad.bindMesh();
 	}
 	
 	private void setUpTextures(){
+		frameBufferID= GL30.glGenFramebuffers();
 		BufferedImage invalid = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
 		invalid.setRGB(0, 0, Color.pink.getRGB());
 		invalid.setRGB(1, 0, Color.black.getRGB());
@@ -202,6 +204,7 @@ public class Graphics {
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glPopMatrix();
 		//destroy the quad
+		quad.unbindMesh();
 		quad.destroy();
 		//remove all the textures
 		for(int i = 0; i < textures.size(); i++){

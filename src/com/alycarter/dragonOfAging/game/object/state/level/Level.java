@@ -124,7 +124,7 @@ public class Level extends State {
 		float left = camera.getPosition().getX() - (float)(graphics.getResolution().getX()/2/unitResolution); 
 		float right = camera.getPosition().getX() + (float)(graphics.getResolution().getX()/2/unitResolution); 
 		float top = camera.getPosition().getY() - (float)(graphics.getResolution().getY()/2/unitResolution); 
-		float down = camera.getPosition().getY() + (float)(graphics.getResolution().getY()/2/unitResolution); 
+		float bottom = camera.getPosition().getY() + (float)(graphics.getResolution().getY()/2/unitResolution); 
 		
 		//start world drawing
 		graphics.enableWorldCamera(camera.getPosition().getX(), camera.getPosition().getY(), unitResolution);
@@ -137,11 +137,10 @@ public class Level extends State {
 		
 		//draw shadows to texture
 		drawShadows(graphics);
-		//graphics.drawImage(shadowBuffer, left+((right - left)/2.0f), top+((down - top)/2.0f), 900, right-left, down-top, 0);
 		//draw the map
 		int mapLayer = 0;
-		for(mapLayer =(int)Math.ceil(down); mapLayer > Math.floor(top)-1; mapLayer--){
-			map.renderLayer(graphics, mapLayer, left, right, top, down);
+		for(mapLayer =(int)Math.ceil(bottom); mapLayer > Math.floor(top)-1; mapLayer--){
+			map.renderLayer(graphics, mapLayer, left, right, top, bottom);
 		}
 		//end world drawing
 		graphics.disableWorldCamera();

@@ -32,12 +32,10 @@ public class Mesh {
 	}
 	
 	public void drawMesh(){
-		bindMesh();
 		GL11.glDrawElements(GL11.GL_TRIANGLES, indexSize, GL11.GL_UNSIGNED_INT, 0);
-		unbindMesh();
 	}
 	
-	private void bindMesh(){
+	public void bindMesh(){
 		//enable arrays
 		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
 		GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
@@ -53,7 +51,7 @@ public class Mesh {
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indexID);
 	}
 	
-	private void unbindMesh(){
+	public void unbindMesh(){
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 		GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
