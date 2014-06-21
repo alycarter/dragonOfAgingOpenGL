@@ -85,6 +85,19 @@ public class Level extends State {
 		if(game.getControls().isKeyTyped(Keyboard.KEY_R)){
 			loadLevel();
 		}
+		if(game.getControls().isKeyHeld(Keyboard.KEY_EQUALS)){
+			unitResolution-=deltaTime * 20;
+		}
+		if(game.getControls().isKeyHeld(Keyboard.KEY_MINUS)){
+			unitResolution+=deltaTime * 20;
+		}
+		if(game.getControls().isKeyTyped(Keyboard.KEY_BACK)){
+			unitResolution = 92;
+		}
+		if(game.getControls().isKeyTyped(Keyboard.KEY_ESCAPE)){
+			markForRemoval();
+		}
+		
 		deltaTime = game.getDeltaTime() * timeSpeed;
 		//update all uiObjects and entities
 		updateObjects(game.getControls());
@@ -138,10 +151,7 @@ public class Level extends State {
 		//draw shadows to texture
 		drawShadows(graphics);
 		//draw the map
-		int mapLayer = 0;
-		for(mapLayer =(int)Math.ceil(bottom); mapLayer > Math.floor(top)-1; mapLayer--){
-			map.renderLayer(graphics, mapLayer, left, right, top, bottom);
-		}
+		map.render(graphics, left, right, top, bottom);
 		//end world drawing
 		graphics.disableWorldCamera();
 		//render ui objects here
@@ -152,11 +162,13 @@ public class Level extends State {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		//draw shadows
 		//GL11.glDisable(GL11.GL_DEPTH_TEST);
+		graphics.bindTexture(shadow);
 		for(int i = 0;i < entities.size(); i++){
 			float y = entities.get(i).getPosition().getY();
-			graphics.drawImage(shadow, entities.get(i).getPosition().getX(), y, 0,
+			graphics.drawRectangle(entities.get(i).getPosition().getX(), y, 0,
 					entities.get(i).getBoundingBox().getX(), entities.get(i).getBoundingBox().getY(), 0);
 		}
+		graphics.unBindTexture();
 		//GL11.glEnable(GL11.GL_DEPTH_TEST);
 		//switch back to window buffer
 		graphics.unbindFromFrameBuffer();

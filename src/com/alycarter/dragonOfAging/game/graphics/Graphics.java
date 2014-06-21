@@ -34,7 +34,6 @@ public class Graphics {
 		setUpMatrices();
 		setUpQuad();
 		setUpTextures();
-		System.out.println(GL11.glGetError());
 	}
 	
 	private void setUpMatrices(){
@@ -173,30 +172,47 @@ public class Graphics {
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	
-	public void drawImage(int textureID, FloatColor color, float x, float y, float z, float width, float height, float rotation){
+	public void drawRectangle(float x, float y, float z, float width, float height, float rotation){
+		//add a matrix to the stack
+		GL11.glPushMatrix();
+			//load the identity matrix
+			GL11.glLoadIdentity();
+			//move to the rectangles position
+			GL11.glTranslatef(x, y, z);
+			//rotate the rectangle
+			GL11.glRotatef(rotation, 0.0f, 0.0f, 1.0f);
+			//scale the rectangle to the right size
+			GL11.glScalef(width, height, 1);
+			//draw our rectangle
+			quad.drawMesh();
+		//pop the matrix off the stack
+		GL11.glPopMatrix();
+	}
+
+	public void bindTexture(int textureID){
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		if(textureID >= 0 && textureID < textures.size()){
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures.get(textureID).getTextureID());
 		}else{
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures.get(invalidTextureID).getTextureID());
 		}
-		drawRectangle(color, x, y, z, width, height, rotation);
-		
+	}
+	
+	public void unBindTexture(){
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 	}
 	
+	public void drawImage(int textureID, FloatColor color, float x, float y, float z, float width, float height, float rotation){
+		bindTexture(textureID);
+		drawRectangle(color, x, y, z, width, height, rotation);
+		unBindTexture();
+	}
+	
 	public void drawImage(int textureID, float x, float y, float z, float width, float height, float rotation){
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		if(textureID >= 0 && textureID < textures.size()){
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures.get(textureID).getTextureID());
-		}else{
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures.get(invalidTextureID).getTextureID());
-		}
-		drawRectangle(FloatColor.WHITE, x, y, z, width, height, rotation);
-		
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		bindTexture(textureID);
+		drawRectangle(x, y, z, width, height, rotation);
+		unBindTexture();
 	}
 
 	public void destroy(){
