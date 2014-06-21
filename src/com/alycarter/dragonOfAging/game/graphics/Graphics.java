@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 
 import com.alycarter.dragonOfAging.game.object.state.State;
 
@@ -22,6 +23,8 @@ public class Graphics {
 	
 	private int invalidTextureID;
 	
+	private int frameBufferID;
+	
 	public Graphics(int width, int height) {
 		resolution = new Point(width, height);
 		textures = new ArrayList<Texture>();
@@ -31,6 +34,7 @@ public class Graphics {
 		setUpMatrices();
 		setUpQuad();
 		setUpTextures();
+		frameBufferID= GL30.glGenFramebuffers();
 	}
 	
 	private void setUpMatrices(){
@@ -42,7 +46,7 @@ public class Graphics {
 		//allow depth testing
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		//allow alpha depth testing
-		GL11.glAlphaFunc(GL11.GL_GREATER, 0.5f);
+		GL11.glAlphaFunc(GL11.GL_GREATER, 0.0f);
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
 		//set up the projection matrix to work in screen coordinates and put it on the stack
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -96,6 +100,22 @@ public class Graphics {
 		textures.add(new Texture(texture, assignedState));
 		//return the texture index
 		return textures.size()-1;
+	}
+	
+	public int addTexture(int width, int height, State assignedState){
+		//add a new texture
+		textures.add(new Texture(width, height, assignedState));
+		//return the texture index
+		return textures.size()-1;
+	}
+	
+	public void bindToFrameBuffer(int textureID){
+		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, frameBufferID);
+		GL30.glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, textures.get(textureID).getTextureID(), 0);
+	}
+	
+	public void unbindFromFrameBuffer(){
+		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
 	}
 
 	public void resourcesUpdate(){

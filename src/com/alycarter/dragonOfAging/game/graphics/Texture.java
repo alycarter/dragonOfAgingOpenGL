@@ -50,6 +50,22 @@ public class Texture {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
 	
+	public Texture(int width, int height, State state){
+		assignedState = state;
+		createTextureObject(width, height);
+	}
+	
+	public void createTextureObject(int width, int height){
+		textureObjectID= GL11.glGenTextures();
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureObjectID);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_INT , (java.nio.ByteBuffer)null);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+	}
+	
 	public State getState(){
 		return assignedState;
 	}

@@ -3,6 +3,8 @@ package com.alycarter.dragonOfAging.game.object.state.level;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import org.lwjgl.opengl.GL11;
+
 import com.alycarter.dragonOfAging.game.graphics.FloatColor;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
@@ -21,10 +23,12 @@ public class Map {
 	private Point size;
 	private float heightMap[];
 	private TiledTexture mapTexture;
+	private int shadow;
 	
-	public Map(Level level, int width, int height) {
+	public Map(Level level, int shadow, int width, int height) {
 		mapTexture = level.getTiledTexture("map");
 		genMap(width, height, 50);
+		this.shadow = shadow;
 	}
 	
 	private void genMap(int width, int height, int rooms){
@@ -80,14 +84,27 @@ public class Map {
 		}
 	}
 
-	public void renderLayer(Graphics graphics, int depthLayer, float left, float right){
+	public void renderLayer(Graphics graphics, int depthLayer, float left, float right, float top, float bottom){
+		float tilesHigh = bottom-top;
+		float tilesWide = right - left;
 		for(int x = (int) Math.floor(left); x < Math.ceil(right); x++){
 			float height = getHeight(x, depthLayer);
 			float value = 1-(height/1.5f);
 			FloatColor color = new FloatColor(value, value, value, 1.0f);
 			float xPos = x + 0.5f;
-			float yPos = depthLayer + 1.0f - height;
-			graphics.drawImage(mapTexture.getTileTextureID(0),color, xPos, yPos, depthLayer, 1, 2, 0);
+			float yPos = depthLayer + 0.5f - height;
+			graphics.drawImage(mapTexture.getTileTextureID(0),color, xPos, yPos+0.5f, depthLayer, 1, 2, 0);
+			GL11.glMatrixMode(GL11.GL_TEXTURE);
+			GL11.glPushMatrix();
+				System.out.println(x +" "+ depthLayer);
+				GL11.glScalef(1.0f/(tilesWide), (1.0f/(tilesHigh))*-1, 1);
+				GL11.glTranslatef(x-left, depthLayer-top, 0);
+				GL11.glMatrixMode(GL11.GL_MODELVIEW);
+				graphics.drawImage(shadow,color, xPos, yPos, depthLayer+0.01f, 1, 1, 0);
+			//graphics.drawImage(mapTexture.getTileTextureID(0),color, xPos, yPos, depthLayer, 1, 2, 0);
+				GL11.glMatrixMode(GL11.GL_TEXTURE);
+			GL11.glPopMatrix();
+			GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		}	
 	}
 	

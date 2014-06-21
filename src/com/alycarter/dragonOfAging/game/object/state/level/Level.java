@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 import com.alycarter.dragonOfAging.game.Game;
 import com.alycarter.dragonOfAging.game.controls.Controls;
@@ -41,6 +42,9 @@ public class Level extends State {
 	//pixel size of the in game units
 	private float unitResolution;
 	
+	private int shadowBuffer;
+	private int shadow;
+	
 	public Level(String name, Graphics graphics) {
 		super(name);
 		entities = new ArrayList<Entity>();
@@ -58,11 +62,13 @@ public class Level extends State {
 			tilesTextures.add(new TiledTexture(graphics, this, "slime", ImageIO.read(Level.class.getResource("/slime.png")), 12, 12));
 			tilesTextures.add(new TiledTexture(graphics, this, "shadow", ImageIO.read(Level.class.getResource("/shadow.png")), 12, 12));
 		} catch (IOException e) {e.printStackTrace();}
+		shadowBuffer = graphics.addTexture(graphics.getResolution().x, graphics.getResolution().y, this);
+		shadow = getTiledTexture("shadow").getTileTextureID(0);
 		loadLevel();
 	}
 	
 	private void loadLevel(){
-		map = new Map(this, 100, 100);
+		map = new Map(this, shadowBuffer, 100, 100);
 		entities.clear();
 		player = new Player(this,(float)map.getSize().getX()/2.0f, (float)map.getSize().getY()/2.0f);
 		entities.add(player);
@@ -125,18 +131,36 @@ public class Level extends State {
 		
 		//need to sort the entities by depth//removed for depth testing purposes
 		//sortEntities();
-		
-		//draw the map
-		int mapLayer = 0;
-		for(mapLayer =(int)Math.ceil(down); mapLayer > Math.floor(top)-1; mapLayer--){
-			map.renderLayer(graphics, mapLayer, left, right);
-		}
 		for(int i = 0;i < entities.size(); i++){
 			entities.get(i).render(graphics);
 		}
-		graphics.disableWorldCamera();
+		
+		//draw shadows to texture
+		drawShadows(graphics);
+		//graphics.drawImage(shadowBuffer, left+((right - left)/2.0f), top+((down - top)/2.0f), 900, right-left, down-top, 0);
+		//draw the map
+		int mapLayer = 0;
+		for(mapLayer =(int)Math.ceil(down); mapLayer > Math.floor(top)-1; mapLayer--){
+			map.renderLayer(graphics, mapLayer, left, right, top, down);
+		}
 		//end world drawing
+		graphics.disableWorldCamera();
 		//render ui objects here
+	}
+	
+	private void drawShadows(Graphics graphics){
+		graphics.bindToFrameBuffer(shadowBuffer);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		//draw shadows
+		//GL11.glDisable(GL11.GL_DEPTH_TEST);
+		for(int i = 0;i < entities.size(); i++){
+			float y = entities.get(i).getPosition().getY();
+			graphics.drawImage(shadow, entities.get(i).getPosition().getX(), y, 0,
+					entities.get(i).getBoundingBox().getX(), entities.get(i).getBoundingBox().getY(), 0);
+		}
+		//GL11.glEnable(GL11.GL_DEPTH_TEST);
+		//switch back to window buffer
+		graphics.unbindFromFrameBuffer();
 	}
 	
 	/*private void sortEntities(){
