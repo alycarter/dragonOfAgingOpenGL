@@ -42,9 +42,8 @@ public class Level extends State {
 	//pixel size of the in game units
 	private float unitResolution;
 	
-	private int flatShadowBuffer;
-	private int stretchedShadowBuffer;
-	private int shadowTexture;
+	private int shadowBuffer;
+	private int shadow;
 	
 	public Level(String name, Graphics graphics) {
 		super(name);
@@ -63,15 +62,13 @@ public class Level extends State {
 			tilesTextures.add(new TiledTexture(graphics, this, "slime", ImageIO.read(Level.class.getResource("/slime.png")), 12, 12));
 			tilesTextures.add(new TiledTexture(graphics, this, "shadow", ImageIO.read(Level.class.getResource("/shadow.png")), 12, 12));
 		} catch (IOException e) {e.printStackTrace();}
-		flatShadowBuffer = graphics.addTexture(graphics.getResolution().x, graphics.getResolution().y, this);
-		stretchedShadowBuffer = graphics.addTexture(graphics.getResolution().x, graphics.getResolution().y*2, this);
-		
-		shadowTexture = getTiledTexture("shadow").getTileTextureID(0);
+		shadowBuffer = graphics.addTexture(graphics.getResolution().x, graphics.getResolution().y, this);
+		shadow = getTiledTexture("shadow").getTileTextureID(0);
 		loadLevel();
 	}
 	
 	private void loadLevel(){
-		map = new Map(this, stretchedShadowBuffer, 100, 100);
+		map = new Map(this, shadowBuffer, 100, 100);
 		entities.clear();
 		player = new Player(this,(float)map.getSize().getX()/2.0f, (float)map.getSize().getY()/2.0f);
 		entities.add(player);
@@ -153,7 +150,6 @@ public class Level extends State {
 		
 		//draw shadows to texture
 		drawShadows(graphics);
-		stretchShadows(graphics, top, bottom, left, right);
 		//draw the map
 		map.render(graphics, left, right, top, bottom);
 		//end world drawing
@@ -162,42 +158,20 @@ public class Level extends State {
 	}
 	
 	private void drawShadows(Graphics graphics){
-		graphics.bindToFrameBuffer(flatShadowBuffer);
+		graphics.bindToFrameBuffer(shadowBuffer);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		//draw shadows
-		graphics.bindTexture(0);
+		//GL11.glDisable(GL11.GL_DEPTH_TEST);
+		graphics.bindTexture(shadow);
 		for(int i = 0;i < entities.size(); i++){
 			float y = entities.get(i).getPosition().getY();
 			graphics.drawRectangle(entities.get(i).getPosition().getX(), y, 0,
 					entities.get(i).getBoundingBox().getX(), entities.get(i).getBoundingBox().getY(), 0);
 		}
 		graphics.unBindTexture();
+		//GL11.glEnable(GL11.GL_DEPTH_TEST);
 		//switch back to window buffer
 		graphics.unbindFromFrameBuffer();
-	}
-	
-	private void stretchShadows(Graphics graphics, float top, float bottom, float left, float right){
-		//start stretching out the shadows
-		float tilesHigh = bottom - top;
-		graphics.bindToFrameBuffer(stretchedShadowBuffer);
-		GL11.glViewport(0, 0, graphics.getResolution().x, graphics.getResolution().y*2);
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		GL11.glMatrixMode(GL11.GL_TEXTURE);
-		GL11.glPushMatrix();
-			GL11.glScalef(1, 1.0f/tilesHigh, 1);
-			for(float y = 0; y < Math.ceil(tilesHigh); y++){	
-				GL11.glMatrixMode(GL11.GL_MODELVIEW);
-				graphics.drawImage(flatShadowBuffer, left+((right - left)/2), y+0.5f+top, 0, right - left, 1, 0);
-				GL11.glMatrixMode(GL11.GL_TEXTURE);
-				GL11.glTranslatef(0, 2, 0);
-			}
-		GL11.glPopMatrix();
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		graphics.unbindFromFrameBuffer();
-		GL11.glViewport(0, 0, graphics.getResolution().x, graphics.getResolution().y);
-		//graphics.drawImage(stretchedShadowBuffer, left+((right - left)/2), top+(tilesHigh/2.0f), 0, right - left, bottom - top, 0);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 	
 	/*private void sortEntities(){
