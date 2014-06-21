@@ -87,6 +87,7 @@ public class Map {
 	public void render(Graphics graphics, float left, float right, float top, float bottom){
 		float tilesHigh = bottom - top;
 		float tilesWide = right - left;
+		graphics.bindTexture(mapTexture.getTileTextureID(0));
 		for(int y =(int)Math.ceil(bottom); y > Math.floor(top)-1; y--){	
 			for(int x = (int) Math.floor(left); x < Math.ceil(right); x++){
 				float height = getHeight(x, y);
@@ -94,18 +95,34 @@ public class Map {
 				FloatColor color = new FloatColor(value, value, value, 1.0f);
 				float xPos = x + 0.5f;
 				float yPos = y + 0.5f - height;
-				graphics.drawImage(mapTexture.getTileTextureID(0),color, xPos, yPos+0.5f, y, 1, 2, 0);
-				GL11.glMatrixMode(GL11.GL_TEXTURE);
-				GL11.glPushMatrix();
-					GL11.glScalef(1.0f/(tilesWide), (1.0f/(tilesHigh))*-1, 1);
-					GL11.glTranslatef(x-left, y-top, 0);
-					GL11.glMatrixMode(GL11.GL_MODELVIEW);
-					graphics.drawImage(shadow,color, xPos, yPos, y+0.01f, 1, 1, 0);
-					GL11.glMatrixMode(GL11.GL_TEXTURE);
-				GL11.glPopMatrix();
-				GL11.glMatrixMode(GL11.GL_MODELVIEW);
+				graphics.drawRectangle(color, xPos, yPos+0.5f, y, 1, 2, 0);
 			}	
 		}
+		graphics.bindTexture(shadow);
+		GL11.glMatrixMode(GL11.GL_TEXTURE);
+		GL11.glPushMatrix();
+			GL11.glScalef(1.0f/(tilesWide), (1.0f/(tilesHigh))*-1, 1);
+			for(int y =(int)Math.ceil(bottom); y > Math.floor(top)-1; y--){	
+				for(int x = (int) Math.floor(left); x < Math.ceil(right); x++){
+					float height = getHeight(x, y);
+					float xPos = x + 0.5f;
+					float yPos = y + 0.5f - height;
+					GL11.glPushMatrix();
+						GL11.glTranslatef(x-left, y-top, 0);
+						GL11.glMatrixMode(GL11.GL_MODELVIEW);
+						graphics.drawRectangle(xPos, yPos, y+0.01f, 1, 1, 0);
+						GL11.glMatrixMode(GL11.GL_TEXTURE);
+						GL11.glTranslatef(0, 1.0f, 0);
+						GL11.glScalef(1, 1.0f/(tilesHigh*4), 1);
+						GL11.glMatrixMode(GL11.GL_MODELVIEW);
+						graphics.drawRectangle(xPos, yPos+1, y+0.01f, 1, 1, 0);
+						GL11.glMatrixMode(GL11.GL_TEXTURE);
+					GL11.glPopMatrix();
+				}	
+			}
+		GL11.glPopMatrix();	
+		graphics.unBindTexture();
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 	}
 	
 	public Point getSize(){
