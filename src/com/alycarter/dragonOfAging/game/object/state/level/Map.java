@@ -110,7 +110,7 @@ public class Map {
 		graphics.bindTexture(shadow);
 		GL11.glMatrixMode(GL11.GL_TEXTURE);
 		GL11.glPushMatrix();
-			GL11.glScalef(1.0f/(tilesWide), (1.0f/(tilesHigh))*-1, 1);
+			GL11.glScalef(1.0f/(tilesWide), (1.0f/(tilesHigh))*-1.0f, 1);
 			for(int y =(int)Math.ceil(bottom); y > Math.floor(top)-1; y--){	
 				for(int x = (int) Math.floor(left); x < Math.ceil(right); x++){
 					float height = getHeight(x, y);

@@ -16,6 +16,8 @@ import com.alycarter.dragonOfAging.game.object.state.State;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.Entity;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.Player;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.Slime;
+import com.alycarter.dragonOfAging.game.object.state.level.particle.Particle;
+import com.alycarter.dragonOfAging.game.object.state.level.particle.ParticleSystem;
 import com.alycarter.dragonOfAging.game.object.state.level.uiObjects.LevelUIObject;
 
 public class Level extends State {
@@ -24,6 +26,9 @@ public class Level extends State {
 	private ArrayList<Entity> entities;
 	private ArrayList<LevelUIObject> uiObjects;
 	private Player player;
+	
+	//particles
+	private ParticleSystem particles;
 	
 	//camera
 	private Camera camera;
@@ -70,11 +75,16 @@ public class Level extends State {
 	private void loadLevel(){
 		map = new Map(this, shadowBuffer, 100, 100);
 		entities.clear();
+		particles = new ParticleSystem(1000);
 		player = new Player(this,(float)map.getSize().getX()/2.0f, (float)map.getSize().getY()/2.0f);
 		entities.add(player);
 		camera = new Camera(player.getPosition());
-		for(int i = 0; i < 100; i++){
-			entities.add(new Slime(this, player.getPosition().getX(), player.getPosition().getY(), 1));
+		float gap = 10;
+		System.out.println(Math.pow(100.0f/gap,2)+" slimes spawned");
+		for(int x = 0 ;x < 100.0f/gap; x++){
+			for(int y = 0 ;y < 100.0f/gap; y++){
+				entities.add(new Slime(this,x*gap, y*gap, 1));				
+			}
 		}
 	}
 
@@ -99,6 +109,12 @@ public class Level extends State {
 		deltaTime = game.getDeltaTime() * timeSpeed;
 		//update all uiObjects and entities
 		updateObjects(game.getControls());
+		//update particles
+		while(particles.hasFreeParticles()){
+			particles.createParticle(false, (float)Math.random()*2, 0.1f, 50, 50, 1, 0, 0.5f+((float)Math.random()*0.5f), 1.0f, 1.0f,
+					(float)Math.random()-0.5f, (float)Math.random()-0.5f, (float)Math.random()+4);
+		}
+		particles.update(this);
 		//update camera
 		camera.update(this);
 		//remove any objects that are marked for removal during this frame
@@ -139,14 +155,14 @@ public class Level extends State {
 		
 		//start world drawing
 		graphics.enableWorldCamera(camera.getPosition().getX(), camera.getPosition().getY(), unitResolution);
-		
-		//need to sort the entities by depth//removed for depth testing purposes
-		//sortEntities();
+		//draw entities
 		for(int i = 0;i < entities.size(); i++){
 			if(entities.get(i).isOnScreen(top, bottom, left, right)){
 				entities.get(i).render(graphics);				
 			}
 		}
+		//draw particles
+		particles.render(graphics);
 		//draw shadows to texture
 		drawShadows(graphics,top,bottom,left,right);
 		//draw the map
@@ -160,17 +176,22 @@ public class Level extends State {
 		graphics.bindToFrameBuffer(shadowBuffer);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		//draw shadows
-		//GL11.glDisable(GL11.GL_DEPTH_TEST);
 		graphics.bindTexture(shadow);
 		for(int i = 0;i < entities.size(); i++){
-			if(entities.get(i).isOnScreen(top, bottom, left, right)){
-				float y = entities.get(i).getPosition().getY();
-				graphics.drawRectangle(entities.get(i).getPosition().getX(), y, 0,
-						entities.get(i).getBoundingBox().getX(), entities.get(i).getBoundingBox().getY(), 0);
+			Entity e = entities.get(i); 
+			if(e.isOnScreen(top, bottom, left, right)){
+				float y = e.getPosition().getY();
+				graphics.drawRectangle(e.getPosition().getX(), y, 0,
+						e.getBoundingBox().getX(), e.getBoundingBox().getY(), 0);
 			}
 		}
+		ArrayList<Particle> particleList = particles.getActiveParticles();
+		for(int i = 0;i < particleList.size(); i++){
+			float y = particleList.get(i).getPosition().getY();
+			graphics.drawRectangle(particleList.get(i).getPosition().getX(), y, 0,
+					particleList.get(i).getSize(), particleList.get(i).getSize(), 0);
+		}
 		graphics.unBindTexture();
-		//GL11.glEnable(GL11.GL_DEPTH_TEST);
 		//switch back to window buffer
 		graphics.unbindFromFrameBuffer();
 	}
