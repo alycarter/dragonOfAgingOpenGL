@@ -51,6 +51,19 @@ public class Slime extends DynamicEntity {
 				//start the landing squash animation
 				getSprite().setCurrentAnimationTimer(3,true);
 				dampenVelocity(2, 2, 2);
+				//create particles
+				for(int i =0 ; i< 10; i++){
+					float x = ((float)Math.random()*2)-1;
+					float y = 1-Math.abs(x);
+					if(Math.random()>0.5){
+						y = -y;
+					}
+					Vector3 direction = new Vector3(x, y, 0);
+					direction.normalize();
+					direction.setZ(1.0f);
+					level.getParticles().createParticle(false, 3, 0.1f, getPosition().getX()+(x*getBoundingBox().getX()/2), getPosition().getY(), getPosition().getZ(),
+							0.3f, 1.0f, 0.3f, 1.0f, direction.getX(), direction.getY(), direction.getZ());
+				}
 			}
 			break;
 		case 3:

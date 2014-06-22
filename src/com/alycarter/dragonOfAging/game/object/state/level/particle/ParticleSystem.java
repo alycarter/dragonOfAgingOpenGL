@@ -28,7 +28,7 @@ public class ParticleSystem {
 				i--;
 			}
 		}
-		System.out.println(activeParticles.size());
+		System.out.println("particles remaining: "+deadParticles.size());
 	}
 	
 	public void render(Graphics graphics){
