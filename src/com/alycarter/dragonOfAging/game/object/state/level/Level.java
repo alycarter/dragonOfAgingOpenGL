@@ -67,7 +67,7 @@ public class Level extends State {
 			tilesTextures.add(new TiledTexture(graphics, this, "slime", ImageIO.read(Level.class.getResource("/slime.png")), 12, 12));
 			tilesTextures.add(new TiledTexture(graphics, this, "shadow", ImageIO.read(Level.class.getResource("/shadow.png")), 12, 12));
 		} catch (IOException e) {e.printStackTrace();}
-		shadowBuffer = graphics.addTexture(graphics.getResolution().x, graphics.getResolution().y, this);
+		shadowBuffer = graphics.addTexture(graphics.getResolution().x, graphics.getResolution().y*2, this);
 		shadow = getTiledTexture("shadow").getTileTextureID(0);
 		loadLevel();
 	}
@@ -110,10 +110,6 @@ public class Level extends State {
 		//update all uiObjects and entities
 		updateObjects(game.getControls());
 		//update particles
-		/*while(particles.hasFreeParticles()){
-			particles.createParticle(false, (float)Math.random()*2, 0.1f, 50, 50, 1, 0, 0.5f+((float)Math.random()*0.5f), 1.0f, 1.0f,
-					(float)Math.random()-0.5f, (float)Math.random()-0.5f, (float)Math.random()+4);
-		}*/
 		particles.update(this);
 		//update camera
 		camera.update(this);
@@ -170,6 +166,7 @@ public class Level extends State {
 		//end world drawing
 		graphics.disableWorldCamera();
 		//render ui objects here
+		//graphics.drawImage(shadowBuffer, 400, 300, -900, 800, -600, 0);
 	}
 	
 	private void drawShadows(Graphics graphics, float top, float bottom, float left, float right){
@@ -191,6 +188,7 @@ public class Level extends State {
 			graphics.drawRectangle(particleList.get(i).getPosition().getX(), y, 0,
 					particleList.get(i).getSize(), particleList.get(i).getSize()/2.0f, 0);
 		}
+		
 		graphics.unBindTexture();
 		//switch back to window buffer
 		graphics.unbindFromFrameBuffer();
