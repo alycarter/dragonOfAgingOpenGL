@@ -110,7 +110,7 @@ public class Map {
 		graphics.bindTexture(shadow);
 		GL11.glMatrixMode(GL11.GL_TEXTURE);
 		GL11.glPushMatrix();
-			GL11.glTranslatef(0, -0.5f, 0);
+			GL11.glTranslatef(0, -1f, 0);
 			GL11.glScalef(1.0f/(tilesWide), (1.0f/(tilesHigh))*-0.5f, 1);
 			for(int y =(int)Math.ceil(bottom); y > Math.floor(top)-1; y--){	
 				for(int x = (int) Math.floor(left); x < Math.ceil(right); x++){

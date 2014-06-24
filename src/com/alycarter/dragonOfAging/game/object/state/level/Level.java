@@ -166,6 +166,8 @@ public class Level extends State {
 		//end world drawing
 		graphics.disableWorldCamera();
 		//render ui objects here
+		
+		//debug draw shadow buffer texture
 		//graphics.drawImage(shadowBuffer, 400, 300, -900, 800, -600, 0);
 	}
 	
@@ -174,6 +176,15 @@ public class Level extends State {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		//draw shadows
 		graphics.bindTexture(shadow);
+		//scale the world to fit the shadow texture
+		GL11.glViewport(0, 0, graphics.getResolution().x, graphics.getResolution().y*2);
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glPushMatrix();
+		GL11.glTranslatef(0, top/2, 0);
+		GL11.glScalef(1.0f, 0.5f, 1.0f);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		bottom += bottom-top;
+		//draw all the entity shadows
 		for(int i = 0;i < entities.size(); i++){
 			Entity e = entities.get(i); 
 			if(e.isOnScreen(top, bottom, left, right)){
@@ -182,13 +193,19 @@ public class Level extends State {
 						e.getBoundingBox().getX(), e.getBoundingBox().getY(), 0);
 			}
 		}
+		//draw all the particle shadows
 		ArrayList<Particle> particleList = particles.getActiveParticles();
 		for(int i = 0;i < particleList.size(); i++){
 			float y = particleList.get(i).getPosition().getY();
 			graphics.drawRectangle(particleList.get(i).getPosition().getX(), y, 0,
 					particleList.get(i).getSize(), particleList.get(i).getSize()/2.0f, 0);
 		}
-		
+		//move back tot the normal viewport
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glPopMatrix();
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glViewport(0, 0, graphics.getResolution().x, graphics.getResolution().y);
+		//deselect the shadow texture
 		graphics.unBindTexture();
 		//switch back to window buffer
 		graphics.unbindFromFrameBuffer();
