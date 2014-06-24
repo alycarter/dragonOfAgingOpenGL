@@ -69,29 +69,29 @@ public class Level extends State {
 		} catch (IOException e) {e.printStackTrace();}
 		shadowBuffer = graphics.addTexture(graphics.getResolution().x, graphics.getResolution().y*2, this);
 		shadow = getTiledTexture("shadow").getTileTextureID(0);
-		loadLevel();
+		map =new Map(this, shadowBuffer);
+		loadLevel(0);
 	}
 	
-	private void loadLevel(){
-		map = new Map(this, shadowBuffer, 100, 100);
+	private void loadLevel(long seed){
+		map.genMap(100, 100, 20, seed);
 		entities.clear();
 		particles = new ParticleSystem(2000);
 		player = new Player(this,(float)map.getSize().getX()/2.0f, (float)map.getSize().getY()/2.0f);
 		entities.add(player);
 		camera = new Camera(player.getPosition());
-		float gap = 10;
-		System.out.println(Math.pow(100.0f/gap,2)+" slimes spawned");
-		for(int x = 0 ;x < 100.0f/gap; x++){
-			for(int y = 0 ;y < 100.0f/gap; y++){
-				entities.add(new Slime(this,x*gap, y*gap, 1));				
-			}
+		for(int i = 0 ;i < 10; i++){
+			entities.add(new Slime(this,50, 50, 0));				
 		}
 	}
 
 	@Override
 	public void update(Game game) {
+		if(game.getControls().isKeyTyped(Keyboard.KEY_T)){
+			loadLevel(map.getCurrentSeed());
+		}
 		if(game.getControls().isKeyTyped(Keyboard.KEY_R)){
-			loadLevel();
+			loadLevel((long)(Math.random()*(Long.MAX_VALUE-1)));
 		}
 		if(game.getControls().isKeyHeld(Keyboard.KEY_EQUALS)){
 			unitResolution-=deltaTime * 20;
@@ -158,7 +158,7 @@ public class Level extends State {
 			}
 		}
 		//draw particles
-		particles.render(graphics);
+		particles.render(graphics, top, bottom, left, right);
 		//draw shadows to texture
 		drawShadows(graphics,top,bottom,left,right);
 		//draw the map
@@ -196,11 +196,13 @@ public class Level extends State {
 		//draw all the particle shadows
 		ArrayList<Particle> particleList = particles.getActiveParticles();
 		for(int i = 0;i < particleList.size(); i++){
-			float y = particleList.get(i).getPosition().getY();
-			graphics.drawRectangle(particleList.get(i).getPosition().getX(), y, 0,
+			if(particleList.get(i).isOnScreen(top, bottom, left, right)){
+				float y = particleList.get(i).getPosition().getY();
+				graphics.drawRectangle(particleList.get(i).getPosition().getX(), y, 0,
 					particleList.get(i).getSize(), particleList.get(i).getSize()/2.0f, 0);
+			}
 		}
-		//move back tot the normal viewport
+		//move back to the normal view port
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glPopMatrix();
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);

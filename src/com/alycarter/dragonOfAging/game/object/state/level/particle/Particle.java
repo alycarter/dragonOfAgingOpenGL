@@ -72,4 +72,11 @@ public class Particle{
 		return size;
 	}
 	
+	public boolean isOnScreen(float top, float bottom, float left, float right){
+		return (((getPosition().getY()+getPosition().getZ()+(size/2)) > top) &&
+				((getPosition().getY() - getPosition().getZ() - size) < bottom) &&
+				((getPosition().getX()+size > left)) &&
+				((getPosition().getX()-size < right)));
+	}
+	
 }

@@ -2,6 +2,7 @@ package com.alycarter.dragonOfAging.game.object.state.level;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
@@ -24,27 +25,33 @@ public class Map {
 	private float heightMap[];
 	private TiledTexture mapTexture;
 	private int shadow;
+	private long seed = 0;
 	
-	public Map(Level level, int shadow, int width, int height) {
+	public Map(Level level, int shadow) {
 		mapTexture = level.getTiledTexture("map");
-		genMap(width, height, 50);
 		this.shadow = shadow;
 	}
 	
-	private void genMap(int width, int height, int rooms){
+	public void genMap(int width, int height, int rooms, long seed){
+		this.seed = seed;
+		Random random = new Random(seed);
 		size = new Point(width, height);
 		heightMap = new float[width*height];
 		for(int i = 0; i < width*height; i++){
-			heightMap[i] = DEFAULT_HEIGHT+Math.round(Math.random())*NOISE; 
+			heightMap[i] = DEFAULT_HEIGHT+Math.round(random.nextFloat())*NOISE; 
 		}
 		ArrayList<Node> openNodes = new ArrayList<Node>();
 		openNodes.add(new Node(new Point(width/2, height/2), UP));
 		for(int i = 0; i<rooms && openNodes.size()>0; i++){
-			genCircle(openNodes, (int)(Math.random()*openNodes.size()), (int)(Math.random()*5)+5);
+			genCircle(openNodes, (int)(random.nextFloat()*openNodes.size()), (int)(random.nextFloat()*5)+5, random);
 		}
 	}
 	
-	public void genCircle(ArrayList<Node> nodes, int nodeToUse, int diameter){
+	public long getCurrentSeed(){
+		return seed;
+	}
+	
+	private void genCircle(ArrayList<Node> nodes, int nodeToUse, int diameter, Random random){
 		Node node = nodes.remove(nodeToUse);
 		int radius = diameter/2;
 		Point center = new Point(node.location.x+(node.direction.x * radius), node.location.y+(node.direction.y * radius));
@@ -53,7 +60,7 @@ public class Map {
 		for(int y = center.y-radius; y <= endY; y++){
 			for(int x = center.x-radius; x <= endX; x++){
 				if(center.distance(x, y) <= radius){
-					setHeight(x, y, Math.round(Math.random())*NOISE);
+					setHeight(x, y, Math.round(random.nextFloat())*NOISE);
 				}
 			}
 		}

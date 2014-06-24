@@ -28,12 +28,13 @@ public class ParticleSystem {
 				i--;
 			}
 		}
-		System.out.println("particles remaining: "+deadParticles.size());
 	}
 	
-	public void render(Graphics graphics){
+	public void render(Graphics graphics, float top, float bottom, float left, float right){
 		for(int i = 0 ; i < activeParticles.size();i++){
+			if(activeParticles.get(i).isOnScreen(top, bottom, left, right)){
 			activeParticles.get(i).render(graphics);
+			}
 		}
 	}
 	
@@ -51,6 +52,7 @@ public class ParticleSystem {
 			deadParticles.get(deadParticles.size()-1).create(timeToLive, size, positionX, positionY, positionZ, r, g, b, a, velocityX, velocityY, velocityZ);
 			activeParticles.add(deadParticles.remove(deadParticles.size()-1));
 		}else{
+			System.out.println("out of particles");
 			if(forceCreate){
 				activeParticles.add(activeParticles.remove(0));
 				activeParticles.get(activeParticles.size()-1).create(timeToLive, size, positionX, positionY, positionZ, r, g, b, a, velocityX, velocityY, velocityZ);
