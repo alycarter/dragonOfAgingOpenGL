@@ -43,7 +43,7 @@ public class Map {
 		ArrayList<Node> openNodes = new ArrayList<Node>();
 		openNodes.add(new Node(new Point(width/2, height/2), UP));
 		for(int i = 0; i<rooms && openNodes.size()>0; i++){
-			genCircle(openNodes, (int)(random.nextFloat()*openNodes.size()), (int)(random.nextFloat()*5)+5, random);
+			genCircle(openNodes, (int)(random.nextFloat()*openNodes.size()), (int)(random.nextFloat()*7)+5, random);
 		}
 	}
 	

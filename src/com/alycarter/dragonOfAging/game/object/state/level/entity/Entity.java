@@ -63,5 +63,5 @@ public abstract class Entity extends GameObject {
 		return true;
 	}
 	
-	public abstract void onCollision(Entity e);
+	public abstract void onCollision(Level level, Entity e);
 }

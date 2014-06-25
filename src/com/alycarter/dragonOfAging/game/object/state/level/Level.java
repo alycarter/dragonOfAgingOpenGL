@@ -14,8 +14,10 @@ import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
 import com.alycarter.dragonOfAging.game.object.state.State;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.Entity;
-import com.alycarter.dragonOfAging.game.object.state.level.entity.Player;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.ItemPickUp;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.Slime;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.player.Player;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.Item;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.Particle;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.ParticleSystem;
 import com.alycarter.dragonOfAging.game.object.state.level.uiObjects.LevelUIObject;
@@ -63,6 +65,9 @@ public class Level extends State {
 			tilesTextures.add(new TiledTexture(graphics, this, "ironArms", ImageIO.read(Level.class.getResource("/ironArms.png")), 12, 24));
 			tilesTextures.add(new TiledTexture(graphics, this, "ironChestPlate", ImageIO.read(Level.class.getResource("/ironChestPlate.png")), 12, 24));
 			tilesTextures.add(new TiledTexture(graphics, this, "ironLegs", ImageIO.read(Level.class.getResource("/ironLegs.png")), 12, 24));
+			tilesTextures.add(new TiledTexture(graphics, this, "leatherArms", ImageIO.read(Level.class.getResource("/leatherArms.png")), 12, 24));
+			tilesTextures.add(new TiledTexture(graphics, this, "leatherChestPlate", ImageIO.read(Level.class.getResource("/leatherChestPlate.png")), 12, 24));
+			tilesTextures.add(new TiledTexture(graphics, this, "leatherLegs", ImageIO.read(Level.class.getResource("/leatherLegs.png")), 12, 24));
 			tilesTextures.add(new TiledTexture(graphics, this, "map", ImageIO.read(Level.class.getResource("/grass.png")), 12, 24));
 			tilesTextures.add(new TiledTexture(graphics, this, "slime", ImageIO.read(Level.class.getResource("/slime.png")), 12, 12));
 			tilesTextures.add(new TiledTexture(graphics, this, "shadow", ImageIO.read(Level.class.getResource("/shadow.png")), 12, 12));
@@ -74,15 +79,19 @@ public class Level extends State {
 	}
 	
 	private void loadLevel(long seed){
-		map.genMap(100, 100, 20, seed);
+		map.genMap(100, 100, 30, seed);
 		entities.clear();
 		particles = new ParticleSystem(2000);
 		player = new Player(this,(float)map.getSize().getX()/2.0f, (float)map.getSize().getY()/2.0f);
 		entities.add(player);
 		camera = new Camera(player.getPosition());
-		for(int i = 0 ;i < 10; i++){
+		for(int i = 0 ;i < 15; i++){
 			entities.add(new Slime(this,50, 50, 0));				
 		}
+		entities.add(new ItemPickUp(this, new Item(Item.ARM_CLOTHING_TYPE, "leatherArms", getTiledTexture("leatherArms")), 50, 41, 0));
+		entities.add(new ItemPickUp(this, new Item(Item.CHEST_CLOTHING_TYPE, "leatherChestPlate", getTiledTexture("leatherChestPlate")), 51, 42, 0));
+		entities.add(new ItemPickUp(this, new Item(Item.LEG_CLOTHING_TYPE, "leatherLegs", getTiledTexture("leatherLegs")), 52, 43, 0));
+		
 	}
 
 	@Override

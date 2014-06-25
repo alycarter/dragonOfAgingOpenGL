@@ -54,32 +54,52 @@ public class Sprite {
 		if(position > frameLayers.size()){
 			position = frameLayers.size();
 		}
-		frameLayers.add(frames);
+		frameLayers.add(position, frames);
 	}
 	
 	public void appendFrameLayer(TiledTexture frames){
 		frameLayers.add(frames);
 	}
 	
-	public void removeFrameLayer(String name){
+	public TiledTexture removeFrameLayer(String name){
 		boolean found = false;
+		TiledTexture texture = null;
 		for(int i = 0; i < frameLayers.size() && !found; i++){
 			if(frameLayers.get(i).getName().equals(name)){
-				frameLayers.remove(i);
+				texture = frameLayers.remove(i);
 				found = true;
 			}
 		}
+		return texture;
 	}
 	
-	public void replaceFrameLayer(TiledTexture frames, String name){
+	public TiledTexture removeFrameLayer(int position){
+		if(position >=0 && position < frameLayers.size()){
+			return frameLayers.remove(position);
+		}else{
+			return null;
+		}
+	}
+	
+	public TiledTexture replaceFrameLayer(TiledTexture frames, String name){
 		boolean found = false;
+		TiledTexture texture = null;
 		for(int i = 0; i < frameLayers.size() && !found; i++){
 			if(frameLayers.get(i).getName().equals(name)){
-				frameLayers.remove(i);
+				texture = frameLayers.remove(i);
 				frameLayers.add(i, frames);
 				found = true;
 			}
 		}
+		return texture;
+	}
+	
+	public TiledTexture replaceFrameLayer(TiledTexture frames, int position){
+		TiledTexture texture = removeFrameLayer(position);
+		if(texture != null){
+			addFrameLayer(frames, position);
+		}
+		return texture;
 	}
 	
 	public void setCurrentAnimationTimer(int timer){
@@ -124,5 +144,9 @@ public class Sprite {
 		for(int i = 0; i < frameIDs.size(); i++){
 			graphics.drawImage(frameIDs.get(i), x, y, depth+(i*0.001f), imageSize.x, imageSize.y, 0.0f);
 		}
+	}
+	
+	public int getFrameLayerCount(){
+		return frameLayers.size();
 	}
 }

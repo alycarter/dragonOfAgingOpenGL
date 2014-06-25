@@ -80,12 +80,6 @@ public class Slime extends DynamicEntity {
 	}
 
 	@Override
-	public void onCollision(Entity e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onRender(Graphics graphics) {
 		// TODO Auto-generated method stub
 		

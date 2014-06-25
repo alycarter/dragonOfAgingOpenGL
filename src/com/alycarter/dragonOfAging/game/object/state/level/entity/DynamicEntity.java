@@ -84,7 +84,7 @@ public abstract class DynamicEntity extends Entity {
 			}
 		}	
 		//handle entity collision
-		handleEntityCollisions(level.getEntities());
+		handleEntityCollisions(level);
 	}
 	
 	@Override
@@ -93,21 +93,27 @@ public abstract class DynamicEntity extends Entity {
 		sprite.render(graphics, getPosition().getX(), getPosition().getY()-getPosition().getZ(), getPosition().getY());
 	}
 	
-	private void handleEntityCollisions(ArrayList<Entity> entities){
-		for(int i = 0; i < entities.size(); i++){
-			if(isCollidingWithEntity(entities.get(i))){
-				onCollision(entities.get(i));
-				entities.get(i).onCollision(this);
-				Vector3 push = new Vector3(getPosition());
-				push.subtract(entities.get(i).getPosition());
-				push.setZ(0);
-				push.normalize();
-				push.scale(1/weight);
-				addForce(push);
+	private void handleEntityCollisions(Level level){
+		if(collidesWithEntities()){
+			ArrayList<Entity> entities = level.getEntities();
+			for(int i = 0; i < entities.size(); i++){
+				if(isCollidingWithEntity(entities.get(i))){
+					onCollision(level, entities.get(i));
+					entities.get(i).onCollision(level, this);
+				}
 			}
 		}
 	}
 	
+	@Override
+	public void onCollision(Level level, Entity e) {
+		Vector3 push = new Vector3(getPosition());
+		push.subtract(e.getPosition());
+		push.setZ(0);
+		push.normalize();
+		push.scale(1/weight);
+		addForce(push);
+	}
 	private boolean handleTerrainCollision(Vector3 newPosition, Map map){
 		//get the position of the ground under our new position
 		float groundPos = getMaxGroundHeight(map, newPosition.getX(), newPosition.getY(), getBoundingBox().getX(), getBoundingBox().getY());
