@@ -17,7 +17,9 @@ import com.alycarter.dragonOfAging.game.object.state.level.entity.Entity;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.ItemPickUp;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.Slime;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.Player;
-import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.Item;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.ArmClothing;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.ChestClothing;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.LegClothing;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.Particle;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.ParticleSystem;
 import com.alycarter.dragonOfAging.game.object.state.level.uiObjects.LevelUIObject;
@@ -85,13 +87,16 @@ public class Level extends State {
 		player = new Player(this,(float)map.getSize().getX()/2.0f, (float)map.getSize().getY()/2.0f);
 		entities.add(player);
 		camera = new Camera(player.getPosition());
-		for(int i = 0 ;i < 15; i++){
+		for(int i = 0 ;i < 5; i++){
 			entities.add(new Slime(this,50, 50, 0));				
 		}
-		entities.add(new ItemPickUp(this, new Item(Item.ARM_CLOTHING_TYPE, "leatherArms", getTiledTexture("leatherArms")), 50, 41, 0));
-		entities.add(new ItemPickUp(this, new Item(Item.CHEST_CLOTHING_TYPE, "leatherChestPlate", getTiledTexture("leatherChestPlate")), 51, 42, 0));
-		entities.add(new ItemPickUp(this, new Item(Item.LEG_CLOTHING_TYPE, "leatherLegs", getTiledTexture("leatherLegs")), 52, 43, 0));
-		
+		entities.add(new ItemPickUp(this, new ArmClothing("leatherArms", this), 50, 51, 0));
+		entities.add(new ItemPickUp(this, new ChestClothing("leatherChestPlate", this), 51, 52, 0));
+		entities.add(new ItemPickUp(this, new LegClothing("leatherLegs", this), 52, 53, 0));
+		entities.add(new ItemPickUp(this, new ArmClothing("ironArms", this), 50, 49, 0));
+		entities.add(new ItemPickUp(this, new ChestClothing("ironChestPlate", this), 51, 48, 0));
+		entities.add(new ItemPickUp(this, new LegClothing("ironLegs", this), 52, 47, 0));
+
 	}
 
 	@Override

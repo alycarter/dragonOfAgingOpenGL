@@ -5,12 +5,10 @@ import org.lwjgl.input.Keyboard;
 import com.alycarter.dragonOfAging.game.controls.Controls;
 import com.alycarter.dragonOfAging.game.graphics.AnimationTimer;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
-import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
 import com.alycarter.dragonOfAging.game.math.Vector3;
 import com.alycarter.dragonOfAging.game.object.state.level.Level;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.DynamicEntity;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.Item;
-
 
 public class Player extends DynamicEntity {
 
@@ -18,24 +16,20 @@ public class Player extends DynamicEntity {
 	
 	private float acceleration;
 	
+	private ItemManager itemManager;
+	
 	public static final String PLAYER_TYPE = "player";
-	
-	private int armSlot;
-	private int chestSlot;
-	private int legSlot;
-	
 	
 	public Player(Level level, float x, float y) {
 		super(level, "player", PLAYER_TYPE, x, y, 0, 0.5f, 0.25f, 1.5f, 1, 2,true);
+		itemManager = new ItemManager();
+		itemManager.addTypeLimit(Item.ARM_CLOTHING_TYPE);
+		itemManager.addTypeLimit(Item.LEG_CLOTHING_TYPE);
+		itemManager.addTypeLimit(Item.CHEST_CLOTHING_TYPE);
+		itemManager.addTypeLimit(Item.WEAPON_TYPE);
 		direction = new Vector3(0, 1, 0);
 		acceleration = 15;
 		getSprite().appendFrameLayer(level.getTiledTexture("playerBase"));
-		getSprite().appendFrameLayer(level.getTiledTexture("ironArms"));
-		armSlot = getSprite().getFrameLayerCount()-1;
-		getSprite().appendFrameLayer(level.getTiledTexture("ironLegs"));
-		legSlot = getSprite().getFrameLayerCount()-1;
-		getSprite().appendFrameLayer(level.getTiledTexture("ironChestPlate"));
-		chestSlot = getSprite().getFrameLayerCount()-1;
 		for(int i = 0; i < 8; i++){
 			//add walking frames
 			getSprite().addAnimationTimer(new AnimationTimer(i*4, (i+1)*4, 1.5f, true), false);
@@ -96,20 +90,14 @@ public class Player extends DynamicEntity {
 	}
 
 	public Item pickUpItem(Item item){
-		TiledTexture oldTexture = null;
-		switch(item.getItemType()){
-		case Item.ARM_CLOTHING_TYPE:
-			oldTexture = getSprite().replaceFrameLayer(item.getTexture(), armSlot);
-			return new Item(item.getItemType(), oldTexture.getName(), oldTexture);
-		case Item.LEG_CLOTHING_TYPE:
-			oldTexture = getSprite().replaceFrameLayer(item.getTexture(), legSlot);
-			return new Item(item.getItemType(), oldTexture.getName(), oldTexture);
-		case Item.CHEST_CLOTHING_TYPE:
-			oldTexture = getSprite().replaceFrameLayer(item.getTexture(), chestSlot);
-			return new Item(item.getItemType(), oldTexture.getName(), oldTexture);
-		default:
-			return null;
+		Item oldItem = null;
+		oldItem = itemManager.pickUpItem(item);
+		if(oldItem != null){
+			getSprite().replaceFrameLayer(item.getTexture(), oldItem.getTexture().getName());
+		}else{
+			getSprite().appendFrameLayer(item.getTexture());
 		}
+		return oldItem;
 	}
 
 }

@@ -1,6 +1,9 @@
 package com.alycarter.dragonOfAging.game.object.state.level.entity.player.items;
 
+import com.alycarter.dragonOfAging.game.controls.Controls;
+import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
+import com.alycarter.dragonOfAging.game.object.state.level.Level;
 
 public class Item {
 
@@ -16,8 +19,8 @@ public class Item {
 	private String itemName;
 	private TiledTexture texture;
 	
-	public Item(String type, String name, TiledTexture texture) {
-		this.texture = texture;
+	public Item(String type, String name, Level level) {
+		texture = level.getTiledTexture(name);
 		itemName = name;
 		itemType = type;
 	}
@@ -32,6 +35,14 @@ public class Item {
 	
 	public TiledTexture getTexture(){
 		return texture;
+	}
+	
+	public void update(Level level, Controls controls){
+		
+	}
+	
+	public void render(Graphics graphics){
+		
 	}
 
 }
