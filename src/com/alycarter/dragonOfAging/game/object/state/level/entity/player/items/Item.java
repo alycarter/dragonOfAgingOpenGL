@@ -4,6 +4,7 @@ import com.alycarter.dragonOfAging.game.controls.Controls;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
 import com.alycarter.dragonOfAging.game.object.state.level.Level;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.player.Player;
 
 public class Item {
 
@@ -37,7 +38,7 @@ public class Item {
 		return texture;
 	}
 	
-	public void update(Level level, Controls controls){
+	public void update(Level level, Player player, Controls controls){
 		
 	}
 	

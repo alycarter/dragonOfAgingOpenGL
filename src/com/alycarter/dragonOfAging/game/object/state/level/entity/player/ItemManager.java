@@ -46,9 +46,9 @@ public class ItemManager {
 		return found;
 	}
 	
-	public void update(Level level, Controls controls){
+	public void update(Level level, Player player, Controls controls){
 		for(int i = 0; i < items.size(); i++){
-			items.get(i).update(level, controls);
+			items.get(i).update(level, player, controls);
 		}
 	}
 	

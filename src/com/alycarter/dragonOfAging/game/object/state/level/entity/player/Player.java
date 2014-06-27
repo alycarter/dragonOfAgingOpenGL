@@ -73,7 +73,7 @@ public class Player extends DynamicEntity {
 		if(controls.isKeyHeld(Keyboard.KEY_SPACE) && isGrounded()){
 			addForce(0, 0, 10);
 		}
-		itemManager.update(level, controls);
+		itemManager.update(level, this, controls);
 		getSprite().update(level.getDeltaTime()*getVelocity().getLength());
 	}
 

@@ -20,7 +20,9 @@ public abstract class Entity extends GameObject {
 	public static final String PLAYER_TYPE = "player";
 	public static final String ENEMY_TYPE = "enemy";
 	public static final String FRIENDLY_TYPE = "friendly";
-	public static final String PICKUP_TYPE = "pickup";	
+	public static final String PICKUP_TYPE = "pickup";
+	public static final String PROJECTILE_TYPE = "projectile";
+	
 	
 	public Entity(String name, String type, float x, float y, float z, float width, float depth, float height, boolean collidesWithEntities) {
 		super(name);
@@ -52,16 +54,24 @@ public abstract class Entity extends GameObject {
 	
 	public boolean isCollidingWithEntity(Entity e){
 		if(e != this && collidesWithEntities && e.collidesWithEntities){
-			float xDistance = Math.abs(getPosition().getX() - e.getPosition().getX());
-			float yDistance = Math.abs(getPosition().getY() - e.getPosition().getY());
-			float zDistance = Math.abs(getPosition().getZ() - e.getPosition().getZ());
-			if(xDistance < (getBoundingBox().getX()/2.0f) + (e.getBoundingBox().getX()/2.0f) &&
-						yDistance < (getBoundingBox().getY()/2.0f) + (e.getBoundingBox().getY()/2.0f) &&
-						zDistance < (getBoundingBox().getZ()/2.0f) + (e.getBoundingBox().getZ()/2.0f)){
+			if(isIntersectingWithEntity(e)){
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	public boolean isIntersectingWithEntity(Entity e){
+		float xDistance = Math.abs(getPosition().getX() - e.getPosition().getX());
+		float yDistance = Math.abs(getPosition().getY() - e.getPosition().getY());
+		float zDistance = Math.abs(getPosition().getZ() - e.getPosition().getZ());
+		if(xDistance < (getBoundingBox().getX()/2.0f) + (e.getBoundingBox().getX()/2.0f) &&
+					yDistance < (getBoundingBox().getY()/2.0f) + (e.getBoundingBox().getY()/2.0f) &&
+					zDistance < (getBoundingBox().getZ()/2.0f) + (e.getBoundingBox().getZ()/2.0f)){
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 	public abstract boolean isOnScreen(float top, float bottom, float left, float right);
