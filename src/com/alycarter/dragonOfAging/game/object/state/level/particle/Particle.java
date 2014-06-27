@@ -7,9 +7,9 @@ import com.alycarter.dragonOfAging.game.object.state.level.Level;
 
 public class Particle{
 
-	private float life;
-	
 	private float size;
+	
+	private float decay;
 	
 	private Vector3 position;
 	
@@ -18,7 +18,7 @@ public class Particle{
 	private FloatColor color;
 	
 	public Particle() {
-		life = 0;
+		decay = 0;
 		size = 0;
 		color = new FloatColor(1.0f, 1.0f, 1.0f, 1.0f);
 		position = new Vector3();
@@ -37,23 +37,23 @@ public class Particle{
 		velocity.setX(velocityX);
 		velocity.setY(velocityY);
 		velocity.setZ(velocityZ);
-		life = timeToLive;
+		decay = size / timeToLive;
 		this.size = size;
 	}
 
 	public void update(Level level) {
-		life -= level.getDeltaTime();
+		size -= level.getDeltaTime() * decay;
 		velocity.setZ(velocity.getZ() - level.getDeltaTime()*5);
 		Vector3 deltaVelocity = new Vector3(velocity);
 		deltaVelocity.scale(level.getDeltaTime());
 		position.add(deltaVelocity);
 		if(position.getZ() < level.getMap().getHeight((int)position.getX(), (int)position.getY())){
-			life = 0;
+			size = 0;
 		}
 	}
 
 	public boolean isAlive(){
-		if(life > 0){
+		if(size > 0){
 			return true;
 		}else{
 			return false;

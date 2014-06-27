@@ -28,6 +28,7 @@ public class ParticleSystem {
 				i--;
 			}
 		}
+		System.out.println(deadParticles.size());
 	}
 	
 	public void render(Graphics graphics, float top, float bottom, float left, float right){

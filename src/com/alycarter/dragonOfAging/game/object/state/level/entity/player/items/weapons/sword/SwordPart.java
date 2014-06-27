@@ -3,16 +3,13 @@ package com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.
 import com.alycarter.dragonOfAging.game.controls.Controls;
 import com.alycarter.dragonOfAging.game.graphics.FloatColor;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
-import com.alycarter.dragonOfAging.game.math.Vector3;
 import com.alycarter.dragonOfAging.game.object.state.level.Level;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.Entity;
 
 public class SwordPart extends Entity {
-	
-	public SwordPart(float x, float y, float z,
-			float size) {
+		
+	public SwordPart(float x, float y, float z, float size) {
 		super("sword part", PROJECTILE_TYPE, x, y, z, size, size, 2, false);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -23,21 +20,15 @@ public class SwordPart extends Entity {
 				level.getEntities().get(i).onCollision(level, this);
 			}
 		}
-		if(level.getMap().getHeight((int)getPosition().getX(), (int)getPosition().getY()) > getPosition().getZ()){
-			markForRemoval();
-		}
-		float size = getBoundingBox().getX();
-		size -= level.getDeltaTime()/1.5f;
-		getBoundingBox().set(new Vector3(size, size, getBoundingBox().getZ()));
-		if(size <= 0){
-			markForRemoval();
-		}
+		level.getParticles().createParticle(false, 0.1f, 0.1f, getPosition().getX(), getPosition().getY(), getPosition().getZ(),
+				0.5f, 0.5f, 0.5f, 1.0f, 0, 0, 0);
 	}
 
 	@Override
 	public void render(Graphics graphics) {
 		graphics.drawRectangle(FloatColor.GREY, getPosition().getX(), getPosition().getY()-getPosition().getZ(), getPosition().getY(),
 				getBoundingBox().getX(), getBoundingBox().getX(), 0);
+		markForRemoval();
 	}
 
 	@Override
@@ -50,7 +41,6 @@ public class SwordPart extends Entity {
 	public void onCollision(Level level, Entity e) {
 		if(e.getEntityType() == ENEMY_TYPE){
 			e.takeDamage(level.getPlayer(), 1);
-			markForRemoval();
 		}
 	}
 

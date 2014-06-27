@@ -86,7 +86,7 @@ public class Level extends State {
 		entities.add(new ItemPickUp(this, new ArmClothing("ironArms", this), 50, 49, 0));
 		entities.add(new ItemPickUp(this, new ChestClothing("ironChestPlate", this), 51, 48, 0));
 		entities.add(new ItemPickUp(this, new LegClothing("ironLegs", this), 52, 47, 0));
-		entities.add(new ItemPickUp(this, new Sword("sword", this), 50, 47, 0));
+		entities.add(new ItemPickUp(this, new Sword("sword", this, 1.0f), 50, 47, 0));
 
 	}
 	

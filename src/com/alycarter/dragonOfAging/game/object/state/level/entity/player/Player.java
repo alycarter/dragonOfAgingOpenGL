@@ -34,14 +34,6 @@ public class Player extends DynamicEntity {
 			//add walking frames
 			getSprite().addAnimationTimer(new AnimationTimer(i*4, (i+1)*4, 1.5f, true), false);
 		}
-		for(int i = 0; i < 8; i++){
-			//add sliding frames
-			getSprite().addAnimationTimer(new AnimationTimer((i*4)+1, (i*4)+2, 1.5f, true), false);
-		}
-		for(int i = 0; i < 8; i++){
-			//add standing frames
-			getSprite().addAnimationTimer(new AnimationTimer(i*4, (i*4)+1, 1.5f, true), true);
-		}
 	}
 
 	@Override
@@ -83,11 +75,7 @@ public class Player extends DynamicEntity {
 		double angle = Math.toDegrees(Math.atan2(direction.getX(), direction.getY()));
 		angle+=180;
 		angle%=360;
-		int offset = 0;
-		if(getVelocity().dot(direction)<0){
-			offset=8;
-		}
-		getSprite().setCurrentAnimationTimer((int)(angle/45)+offset);
+		getSprite().setCurrentAnimationTimer((int)(angle/45));
 		itemManager.render(graphics);
 	}
 
@@ -100,6 +88,14 @@ public class Player extends DynamicEntity {
 			getSprite().appendFrameLayer(item.getTexture());
 		}
 		return oldItem;
+	}
+	
+	public Vector3 getDirection(){
+		return direction;
+	}
+	
+	public void setDirection(Vector3 dir){
+		direction = new Vector3(dir);
 	}
 
 }
