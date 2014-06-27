@@ -17,6 +17,11 @@ public abstract class Entity extends GameObject {
 	// does this collide with entities
 	private boolean collidesWithEntities;
 	
+	public static final String PLAYER_TYPE = "player";
+	public static final String ENEMY_TYPE = "enemy";
+	public static final String FRIENDLY_TYPE = "friendly";
+	public static final String PICKUP_TYPE = "pickup";	
+	
 	public Entity(String name, String type, float x, float y, float z, float width, float depth, float height, boolean collidesWithEntities) {
 		super(name);
 		entityType = type;
@@ -59,9 +64,9 @@ public abstract class Entity extends GameObject {
 		return false;
 	}
 	
-	public boolean isOnScreen(float top, float bottom, float left, float right){
-		return true;
-	}
+	public abstract boolean isOnScreen(float top, float bottom, float left, float right);
 	
 	public abstract void onCollision(Level level, Entity e);
+	
+	public abstract void takeDamage(Entity e, float damage);
 }

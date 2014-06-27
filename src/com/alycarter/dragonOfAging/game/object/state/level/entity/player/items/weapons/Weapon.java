@@ -1,6 +1,7 @@
-package com.alycarter.dragonOfAging.game.object.state.level.entity.player.items;
+package com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.weapons;
 
 import com.alycarter.dragonOfAging.game.object.state.level.Level;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.Item;
 
 public abstract class Weapon extends Item {
 

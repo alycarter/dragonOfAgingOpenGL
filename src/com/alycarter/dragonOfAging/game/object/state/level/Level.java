@@ -20,6 +20,7 @@ import com.alycarter.dragonOfAging.game.object.state.level.entity.player.Player;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.ArmClothing;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.ChestClothing;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.LegClothing;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.weapons.sword.Sword;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.Particle;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.ParticleSystem;
 import com.alycarter.dragonOfAging.game.object.state.level.uiObjects.LevelUIObject;
@@ -62,28 +63,17 @@ public class Level extends State {
 		timeSpeed =1.0f;
 		unitResolution = 92.0f; // set to 92
 		tilesTextures = new ArrayList<TiledTexture>();
-		try {
-			tilesTextures.add(new TiledTexture(graphics, this, "playerBase", ImageIO.read(Level.class.getResource("/playerBase.png")), 12, 24));
-			tilesTextures.add(new TiledTexture(graphics, this, "ironArms", ImageIO.read(Level.class.getResource("/ironArms.png")), 12, 24));
-			tilesTextures.add(new TiledTexture(graphics, this, "ironChestPlate", ImageIO.read(Level.class.getResource("/ironChestPlate.png")), 12, 24));
-			tilesTextures.add(new TiledTexture(graphics, this, "ironLegs", ImageIO.read(Level.class.getResource("/ironLegs.png")), 12, 24));
-			tilesTextures.add(new TiledTexture(graphics, this, "leatherArms", ImageIO.read(Level.class.getResource("/leatherArms.png")), 12, 24));
-			tilesTextures.add(new TiledTexture(graphics, this, "leatherChestPlate", ImageIO.read(Level.class.getResource("/leatherChestPlate.png")), 12, 24));
-			tilesTextures.add(new TiledTexture(graphics, this, "leatherLegs", ImageIO.read(Level.class.getResource("/leatherLegs.png")), 12, 24));
-			tilesTextures.add(new TiledTexture(graphics, this, "map", ImageIO.read(Level.class.getResource("/grass.png")), 12, 24));
-			tilesTextures.add(new TiledTexture(graphics, this, "slime", ImageIO.read(Level.class.getResource("/slime.png")), 12, 12));
-			tilesTextures.add(new TiledTexture(graphics, this, "shadow", ImageIO.read(Level.class.getResource("/shadow.png")), 12, 12));
-		} catch (IOException e) {e.printStackTrace();}
+		loadTextures(graphics);
 		shadowBuffer = graphics.addTexture(graphics.getResolution().x, graphics.getResolution().y*2, this);
 		shadow = getTiledTexture("shadow").getTileTextureID(0);
 		map =new Map(this, shadowBuffer);
+		particles = new ParticleSystem(2000);
 		loadLevel(0);
 	}
 	
 	private void loadLevel(long seed){
 		map.genMap(100, 100, 30, seed);
 		entities.clear();
-		particles = new ParticleSystem(2000);
 		player = new Player(this,(float)map.getSize().getX()/2.0f, (float)map.getSize().getY()/2.0f);
 		entities.add(player);
 		camera = new Camera(player.getPosition());
@@ -96,7 +86,24 @@ public class Level extends State {
 		entities.add(new ItemPickUp(this, new ArmClothing("ironArms", this), 50, 49, 0));
 		entities.add(new ItemPickUp(this, new ChestClothing("ironChestPlate", this), 51, 48, 0));
 		entities.add(new ItemPickUp(this, new LegClothing("ironLegs", this), 52, 47, 0));
+		entities.add(new ItemPickUp(this, new Sword("sword", this), 50, 47, 0));
 
+	}
+	
+	private void loadTextures(Graphics graphics){
+		try {
+			tilesTextures.add(new TiledTexture(graphics, this, "playerBase", ImageIO.read(Level.class.getResource("/playerBase.png")), 12, 24));
+			tilesTextures.add(new TiledTexture(graphics, this, "ironArms", ImageIO.read(Level.class.getResource("/ironArms.png")), 12, 24));
+			tilesTextures.add(new TiledTexture(graphics, this, "ironChestPlate", ImageIO.read(Level.class.getResource("/ironChestPlate.png")), 12, 24));
+			tilesTextures.add(new TiledTexture(graphics, this, "ironLegs", ImageIO.read(Level.class.getResource("/ironLegs.png")), 12, 24));
+			tilesTextures.add(new TiledTexture(graphics, this, "leatherArms", ImageIO.read(Level.class.getResource("/leatherArms.png")), 12, 24));
+			tilesTextures.add(new TiledTexture(graphics, this, "leatherChestPlate", ImageIO.read(Level.class.getResource("/leatherChestPlate.png")), 12, 24));
+			tilesTextures.add(new TiledTexture(graphics, this, "leatherLegs", ImageIO.read(Level.class.getResource("/leatherLegs.png")), 12, 24));
+			tilesTextures.add(new TiledTexture(graphics, this, "map", ImageIO.read(Level.class.getResource("/grass.png")), 12, 24));
+			tilesTextures.add(new TiledTexture(graphics, this, "slime", ImageIO.read(Level.class.getResource("/slime.png")), 12, 12));
+			tilesTextures.add(new TiledTexture(graphics, this, "shadow", ImageIO.read(Level.class.getResource("/shadow.png")), 12, 12));
+			tilesTextures.add(new TiledTexture(graphics, this, "sword", ImageIO.read(Level.class.getResource("/sword.png")), 12, 12));
+		} catch (IOException e) {e.printStackTrace();}
 	}
 
 	@Override

@@ -21,7 +21,7 @@ public class Player extends DynamicEntity {
 	public static final String PLAYER_TYPE = "player";
 	
 	public Player(Level level, float x, float y) {
-		super(level, "player", PLAYER_TYPE, x, y, 0, 0.5f, 0.25f, 1.5f, 1, 2,true);
+		super(level, "player", PLAYER_TYPE, x, y, 0, 0.5f, 0.25f, 1.5f, 1, 2,true, 10, true, 0.5f);
 		itemManager = new ItemManager();
 		itemManager.addTypeLimit(Item.ARM_CLOTHING_TYPE);
 		itemManager.addTypeLimit(Item.LEG_CLOTHING_TYPE);
@@ -73,6 +73,7 @@ public class Player extends DynamicEntity {
 		if(controls.isKeyHeld(Keyboard.KEY_SPACE) && isGrounded()){
 			addForce(0, 0, 10);
 		}
+		itemManager.update(level, controls);
 		getSprite().update(level.getDeltaTime()*getVelocity().getLength());
 	}
 
@@ -87,6 +88,7 @@ public class Player extends DynamicEntity {
 			offset=8;
 		}
 		getSprite().setCurrentAnimationTimer((int)(angle/45)+offset);
+		itemManager.render(graphics);
 	}
 
 	public Item pickUpItem(Item item){

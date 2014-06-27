@@ -3,6 +3,7 @@ package com.alycarter.dragonOfAging.game.object.state.level.entity;
 import java.util.ArrayList;
 
 import com.alycarter.dragonOfAging.game.controls.Controls;
+import com.alycarter.dragonOfAging.game.graphics.FloatColor;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.Sprite;
 import com.alycarter.dragonOfAging.game.math.Vector3;
@@ -25,6 +26,32 @@ public abstract class DynamicEntity extends Entity {
 	
 	private Sprite sprite;
 	
+	private float health;
+	private float maxHealth;
+	
+	private boolean takesDamage;
+	private float damageCoolDown;
+	private float damageCoolDownTime;
+	
+	private static final FloatColor DAMAGE_COLOR = new FloatColor(1.0f,0.25f,0.25f, 1.0f);
+	
+	public DynamicEntity(Level level, String name, String type, float x, float y, float z,
+			float width, float depth, float height, float imageWidth, float imageHeight, boolean collidesWithEntities, float health, boolean takesDamage, float damageCoolDown) {
+		super(name, type, x, y, z, width, depth, height, collidesWithEntities);
+		sprite = new Sprite(imageWidth, imageHeight, 0, imageHeight/-2.0f);
+		velocity = new Vector3(0, 0, 0);
+		drag = 4.0f;
+		weight = 50.0f;
+		maxStepUp = 0.2f;
+		bouncyness = 0.3f;
+		grounded = false;
+		this.health = health;
+		maxHealth = health;
+		this.takesDamage = takesDamage;
+		this.damageCoolDownTime = damageCoolDown;
+		this.damageCoolDown = 0;
+	}
+	
 	public DynamicEntity(Level level, String name, String type, float x, float y, float z,
 			float width, float depth, float height, float imageWidth, float imageHeight, boolean collidesWithEntities) {
 		super(name, type, x, y, z, width, depth, height, collidesWithEntities);
@@ -35,6 +62,11 @@ public abstract class DynamicEntity extends Entity {
 		maxStepUp = 0.2f;
 		bouncyness = 0.3f;
 		grounded = false;
+		this.health = 0;
+		maxHealth = health;
+		takesDamage = false;
+		damageCoolDownTime = 0;
+		damageCoolDown = 0;
 	}
 
 	public abstract void onUpdate(Level level, Controls controls);
@@ -85,12 +117,26 @@ public abstract class DynamicEntity extends Entity {
 		}	
 		//handle entity collision
 		handleEntityCollisions(level);
+		//lower any damage cooldown
+		damageCoolDown -= level.getDeltaTime();
 	}
 	
 	@Override
 	public void render(Graphics graphics) {
 		onRender(graphics);
-		sprite.render(graphics, getPosition().getX(), getPosition().getY()-getPosition().getZ(), getPosition().getY());
+		if(takesDamage && damageCoolDown > 0){
+			sprite.render(graphics, DAMAGE_COLOR, getPosition().getX(), getPosition().getY()-getPosition().getZ(), getPosition().getY());	
+		}else{
+			sprite.render(graphics, getPosition().getX(), getPosition().getY()-getPosition().getZ(), getPosition().getY());
+		}
+		if(takesDamage){
+			graphics.drawRectangle(FloatColor.RED, getPosition().getX(), getPosition().getY()-getPosition().getZ()-getBoundingBox().getZ(),
+					getPosition().getY(), 1 , 0.1f, 0);
+			graphics.drawRectangle(FloatColor.GREEN, getPosition().getX(),
+					getPosition().getY()-getPosition().getZ()-getBoundingBox().getZ(),
+					getPosition().getY()+0.001f, 1*(getHealth()/getMaxHealth()) , 0.1f, 0);
+				
+		}
 	}
 	
 	private void handleEntityCollisions(Level level){
@@ -114,6 +160,7 @@ public abstract class DynamicEntity extends Entity {
 		push.scale(1/weight);
 		addForce(push);
 	}
+	
 	private boolean handleTerrainCollision(Vector3 newPosition, Map map){
 		//get the position of the ground under our new position
 		float groundPos = getMaxGroundHeight(map, newPosition.getX(), newPosition.getY(), getBoundingBox().getX(), getBoundingBox().getY());
@@ -239,5 +286,45 @@ public abstract class DynamicEntity extends Entity {
 	
 	public Sprite getSprite(){
 		return sprite;
+	}
+	
+	@Override
+	public void takeDamage(Entity e, float damage) {
+		if(takesDamage && damageCoolDown <= 0){
+			health -= damage;
+			damageCoolDown = damageCoolDownTime;
+			if(health <=0){
+				health = 0;
+				kill();
+			}
+		}
+	}
+	
+	public void onDamage(Entity e){
+		
+	}
+	
+	public void kill(){
+		onDeath();
+	}
+	
+	public void onDeath(){
+		markForRemoval();
+	}
+	
+	public boolean isDead(){
+		if(health <=0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public float getHealth(){
+		return health;
+	}
+	
+	public float getMaxHealth(){
+		return maxHealth;
 	}
 }

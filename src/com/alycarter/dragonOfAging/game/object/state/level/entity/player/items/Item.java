@@ -10,9 +10,9 @@ public class Item {
 	public static final String ARM_CLOTHING_TYPE = "arm";
 	public static final String CHEST_CLOTHING_TYPE = "chest";
 	public static final String LEG_CLOTHING_TYPE = "legs";
-	public static final String HEAD_CLOTHING_TYPE = "legs";
-	public static final String WEAPON_TYPE = "legs";
-	public static final String STAT_TYPE = "legs";
+	public static final String HEAD_CLOTHING_TYPE = "head";
+	public static final String WEAPON_TYPE = "weapon";
+	public static final String STAT_TYPE = "stat";
 	
 	
 	private String itemType;

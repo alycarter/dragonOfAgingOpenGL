@@ -146,6 +146,16 @@ public class Sprite {
 		}
 	}
 	
+	public void render(Graphics graphics, FloatColor color, float worldPositionX, float worldPositionY, float depth){
+		float x = worldPositionX + imageOffSet.x;
+		float y = worldPositionY + imageOffSet.y;
+		ArrayList<Integer> frameIDs = getFrameTextureIDs();
+		for(int i = 0; i < frameIDs.size(); i++){
+			graphics.drawImage(frameIDs.get(i), color, x, y, depth+(i*0.001f), imageSize.x, imageSize.y, 0.0f);
+		}
+	}
+	
+	
 	public int getFrameLayerCount(){
 		return frameLayers.size();
 	}

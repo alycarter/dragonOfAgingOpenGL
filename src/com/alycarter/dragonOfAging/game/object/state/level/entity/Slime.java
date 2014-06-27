@@ -11,7 +11,7 @@ public class Slime extends DynamicEntity {
 	private float jumpDelay = 2;
 	
 	public Slime(Level level, float x, float y, float z) 	{
-		super(level,"slime", "slime", x, y, z, 0.7f, 0.3f, 1.0f, 1.0f, 1.0f,true);
+		super(level,"slime", "slime", x, y, z, 0.7f, 0.3f, 1.0f, 1.0f, 1.0f,true,5,true, 0.5f);
 		getSprite().appendFrameLayer(level.getTiledTexture("slime"));
 		//normal
 		getSprite().addAnimationTimer(new AnimationTimer(0, 1, 1, false), true);
@@ -83,6 +83,14 @@ public class Slime extends DynamicEntity {
 	public void onRender(Graphics graphics) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public void onCollision(Level level, Entity e) {
+		super.onCollision(level, e);
+		if(e.getEntityType().equals(PLAYER_TYPE)){
+			e.takeDamage(e, 1);
+		}
 	}
 
 }
