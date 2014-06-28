@@ -8,8 +8,13 @@ import com.alycarter.dragonOfAging.game.object.state.level.entity.Entity;
 
 public class SwordPart extends Entity {
 		
-	public SwordPart(float x, float y, float z, float size) {
-		super("sword part", PROJECTILE_TYPE, x, y, z, size, size, 2, false);
+	private float damage;
+	private FloatColor color;
+	
+	public SwordPart(float size, float damage, FloatColor color) {
+		super("sword part", PROJECTILE_TYPE, 0, 0, 0, size, size, 1, false);
+		this.damage = damage;
+		this.color = color;
 	}
 
 	@Override
@@ -20,34 +25,32 @@ public class SwordPart extends Entity {
 				level.getEntities().get(i).onCollision(level, this);
 			}
 		}
-		level.getParticles().createParticle(false, 0.1f, 0.1f, getPosition().getX(), getPosition().getY(), getPosition().getZ(),
-				0.5f, 0.5f, 0.5f, 1.0f, 0, 0, 0);
 	}
 
 	@Override
 	public void render(Graphics graphics) {
-		graphics.drawRectangle(FloatColor.GREY, getPosition().getX(), getPosition().getY()-getPosition().getZ(), getPosition().getY(),
+		graphics.drawRectangle(color, getPosition().getX(), getPosition().getY()-getPosition().getZ(), getPosition().getY(),
 				getBoundingBox().getX(), getBoundingBox().getX(), 0);
-		markForRemoval();
 	}
 
 	@Override
 	public boolean isOnScreen(float top, float bottom, float left, float right) {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public void onCollision(Level level, Entity e) {
 		if(e.getEntityType() == ENEMY_TYPE){
-			e.takeDamage(level.getPlayer(), 1);
+			e.takeDamage(level.getPlayer(), damage);
 		}
 	}
 
 	@Override
 	public void takeDamage(Entity e, float damage) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
+	public FloatColor getColor(){
+		return color;
+	}
 }

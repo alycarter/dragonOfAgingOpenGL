@@ -73,7 +73,7 @@ public class Player extends DynamicEntity {
 	public void onRender(Graphics graphics) {
 		//calculate animation to use
 		double angle = Math.toDegrees(Math.atan2(direction.getX(), direction.getY()));
-		angle+=180;
+		angle+=202.5f;
 		angle%=360;
 		getSprite().setCurrentAnimationTimer((int)(angle/45));
 		itemManager.render(graphics);

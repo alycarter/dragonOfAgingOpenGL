@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.alycarter.dragonOfAging.game.Game;
 import com.alycarter.dragonOfAging.game.controls.Controls;
+import com.alycarter.dragonOfAging.game.graphics.FloatColor;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
 import com.alycarter.dragonOfAging.game.object.state.State;
@@ -86,8 +87,7 @@ public class Level extends State {
 		entities.add(new ItemPickUp(this, new ArmClothing("ironArms", this), 50, 49, 0));
 		entities.add(new ItemPickUp(this, new ChestClothing("ironChestPlate", this), 51, 48, 0));
 		entities.add(new ItemPickUp(this, new LegClothing("ironLegs", this), 52, 47, 0));
-		entities.add(new ItemPickUp(this, new Sword("sword", this, 1.0f), 50, 47, 0));
-
+		entities.add(new ItemPickUp(this, new Sword("sword", this, 20, 1, 0.5f, 0.1f, 0.8f, 0.05f, 0.2f, FloatColor.GREY, new FloatColor(0.5f, 0.2f, 0.0f, 1.0f)), 50, 47, 0));
 	}
 	
 	private void loadTextures(Graphics graphics){
