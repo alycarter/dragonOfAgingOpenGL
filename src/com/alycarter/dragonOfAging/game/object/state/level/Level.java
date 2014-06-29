@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL11;
 
 import com.alycarter.dragonOfAging.game.Game;
 import com.alycarter.dragonOfAging.game.controls.Controls;
-import com.alycarter.dragonOfAging.game.graphics.FloatColor;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
 import com.alycarter.dragonOfAging.game.object.state.State;
@@ -21,7 +20,8 @@ import com.alycarter.dragonOfAging.game.object.state.level.entity.player.Player;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.ArmClothing;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.ChestClothing;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.LegClothing;
-import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.weapons.sword.Sword;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.weapons.sword.LongSword;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.weapons.sword.Spear;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.Particle;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.ParticleSystem;
 import com.alycarter.dragonOfAging.game.object.state.level.uiObjects.LevelUIObject;
@@ -81,13 +81,15 @@ public class Level extends State {
 		for(int i = 0 ;i < 5; i++){
 			entities.add(new Slime(this,50, 50, 0));				
 		}
-		entities.add(new ItemPickUp(this, new ArmClothing("leatherArms", this, -0.05f, -0.1f), 50, 51, 0));
-		entities.add(new ItemPickUp(this, new ChestClothing("leatherChestPlate", this, -0.05f, -0.1f), 51, 52, 0));
-		entities.add(new ItemPickUp(this, new LegClothing("leatherLegs", this, -0.05f, -0.1f), 52, 53, 0));
-		entities.add(new ItemPickUp(this, new ArmClothing("ironArms", this, -0.1f, -0.2f), 50, 49, 0));
-		entities.add(new ItemPickUp(this, new ChestClothing("ironChestPlate", this, -0.1f, -0.2f), 51, 48, 0));
-		entities.add(new ItemPickUp(this, new LegClothing("ironLegs", this, -0.1f, -0.2f), 52, 47, 0));
-		entities.add(new ItemPickUp(this, new Sword("sword", this, -0.1f, 20, 1, 0.5f, 0.1f, 0.8f, 0.05f, 0.2f, FloatColor.GREY, new FloatColor(0.5f, 0.2f, 0.0f, 1.0f)), 50, 47, 0));
+		entities.add(new ItemPickUp(this, new ArmClothing("leatherArms", this, -0.05f, -0.1f, 0.05f, 0, 0, 0), 50, 53, 0));
+		entities.add(new ItemPickUp(this, new ChestClothing("leatherChestPlate", this, -0.05f, -0.1f, 0, 0, 0.05f, 0), 51, 53, 0));
+		entities.add(new ItemPickUp(this, new LegClothing("leatherLegs", this, -0.05f, -0.1f, 0, 0.05f, 0, 0), 52, 53, 0));
+		entities.add(new ItemPickUp(this, new ArmClothing("ironArms", this, -0.1f, -0.2f, 0.1f, 0, 0, 0), 50, 55, 0));
+		entities.add(new ItemPickUp(this, new ChestClothing("ironChestPlate", this, -0.1f, -0.2f, 0, 0, 0.1f, 0), 51, 55, 0));
+		entities.add(new ItemPickUp(this, new LegClothing("ironLegs", this, -0.1f, -0.2f, 0, 0.1f, 0, 0), 52, 55, 0));
+		entities.add(new ItemPickUp(this, new LongSword(this), 50, 57, 0));
+		entities.add(new ItemPickUp(this, new Spear(this), 51, 57, 0));
+		entities.add(new ItemPickUp(this, new Zweihander(this), 52, 57, 0));	
 	}
 	
 	private void loadTextures(Graphics graphics){
@@ -125,6 +127,9 @@ public class Level extends State {
 		}
 		if(game.getControls().isKeyTyped(Keyboard.KEY_ESCAPE)){
 			markForRemoval();
+		}
+		if(game.getControls().isKeyTyped(Keyboard.KEY_P)){
+			player.updateAge();
 		}
 		
 		deltaTime = game.getDeltaTime() * timeSpeed;

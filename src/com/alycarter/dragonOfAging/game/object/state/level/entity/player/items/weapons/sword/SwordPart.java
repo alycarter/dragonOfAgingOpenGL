@@ -10,11 +10,17 @@ public class SwordPart extends Entity {
 		
 	private float damage;
 	private FloatColor color;
+	private String partType;
 	
-	public SwordPart(float size, float damage, FloatColor color) {
+	public static final String BLADE_PART = "blade";
+	public static final String HANDLE_PART = "handle";
+	
+	
+	public SwordPart(String partType, float size, float damage, FloatColor color) {
 		super("sword part", PROJECTILE_TYPE, 0, 0, 0, size, size, 1, false);
 		this.damage = damage;
 		this.color = color;
+		this.partType = partType;
 	}
 
 	@Override
@@ -53,4 +59,9 @@ public class SwordPart extends Entity {
 	public FloatColor getColor(){
 		return color;
 	}
+
+	public String getPartType(){
+		return partType;
+	}
 }
+

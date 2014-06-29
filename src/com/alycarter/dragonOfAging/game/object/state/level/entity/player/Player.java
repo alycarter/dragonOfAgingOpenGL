@@ -23,6 +23,11 @@ public class Player extends DynamicEntity {
 	
 	public static final String PLAYER_TYPE = "player";
 	
+	private float armStrength;
+	private float legStrength;
+	private float chestStrength;
+	private float headStrength;
+	
 	public Player(Level level, float x, float y) {
 		super(level, "player", PLAYER_TYPE, x, y, 0, 0.5f, 0.25f, 1.5f, 1, 2,true, 10, true, 0.5f);
 		itemManager = new ItemManager();
@@ -37,11 +42,15 @@ public class Player extends DynamicEntity {
 			//add walking frames
 			getSprite().addAnimationTimer(new AnimationTimer(i*4, (i+1)*4, 1.5f, true), false);
 		}
+		armStrength = 1;
+		legStrength = 1;
+		chestStrength = 1;
+		headStrength = 1;
 	}
 
 	@Override
 	public void onUpdate(Level level, Controls controls) {
-		acceleration = BASE_WALKING_SPEED + (BASE_WALKING_SPEED*itemManager.getSpeedModifier());
+		acceleration = (BASE_WALKING_SPEED + (BASE_WALKING_SPEED*itemManager.getSpeedModifier()))*legStrength;
 		float x = 0;
 		float y = 0;
 		if(controls.isKeyHeld(Keyboard.KEY_W)){
@@ -69,6 +78,7 @@ public class Player extends DynamicEntity {
 		if(controls.isKeyHeld(Keyboard.KEY_SPACE) && isGrounded()){
 			addForce(0, 0, 10);
 		}
+		
 		itemManager.update(level, this, controls);
 		getSprite().update(level.getDeltaTime()*getVelocity().getLength());
 	}
@@ -114,5 +124,39 @@ public class Player extends DynamicEntity {
 			}
 		}
 	}
+
+	public float getArmStrength() {
+		return armStrength;
+	}
+
+	public float getLegStrength() {
+		return legStrength;
+	}
+
+	public float getChestStrength() {
+		return chestStrength;
+	}
+
+	public float getHeadStrength() {
+		return headStrength;
+	}
 	
+	public void updateAge(){
+		armStrength -= itemManager.getArmStrain();
+		if(armStrength < 0.05f){
+			armStrength = 0.05f;
+		}
+		legStrength -= itemManager.getLegStrain();
+		if(legStrength < 0.05f){
+			legStrength = 0.05f;
+		}
+		chestStrength -= itemManager.getChestStrain();
+		if(chestStrength < 0.05f){
+			chestStrength = 0.05f;
+		}
+		headStrength -= itemManager.getHeadStrain();
+		if(headStrength < 0.05f){
+			headStrength = 0.05f;
+		}
+	}
 }

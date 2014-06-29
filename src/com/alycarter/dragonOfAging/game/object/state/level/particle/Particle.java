@@ -9,7 +9,7 @@ public class Particle{
 
 	private float size;
 	
-	private float decay;
+	private float life;
 	
 	private Vector3 position;
 	
@@ -18,7 +18,6 @@ public class Particle{
 	private FloatColor color;
 	
 	public Particle() {
-		decay = 0;
 		size = 0;
 		color = new FloatColor(1.0f, 1.0f, 1.0f, 1.0f);
 		position = new Vector3();
@@ -37,17 +36,20 @@ public class Particle{
 		velocity.setX(velocityX);
 		velocity.setY(velocityY);
 		velocity.setZ(velocityZ);
-		decay = size / timeToLive;
 		this.size = size;
+		life = timeToLive;
 	}
 
 	public void update(Level level) {
-		size -= level.getDeltaTime() * decay;
 		velocity.setZ(velocity.getZ() - level.getDeltaTime()*5);
 		Vector3 deltaVelocity = new Vector3(velocity);
 		deltaVelocity.scale(level.getDeltaTime());
 		position.add(deltaVelocity);
+		life -= level.getDeltaTime();
 		if(position.getZ() < level.getMap().getHeight((int)position.getX(), (int)position.getY())){
+			size = 0;
+		}
+		if(life <= 0){
 			size = 0;
 		}
 	}

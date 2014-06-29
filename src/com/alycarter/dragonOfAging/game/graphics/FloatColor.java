@@ -18,7 +18,7 @@ public class FloatColor {
 	public static FloatColor PINK = new FloatColor(1.0f, 0.0f, 1.0f, 1.0f);
 	public static FloatColor CYAN = new FloatColor(0.0f, 1.0f, 1.0f, 1.0f);
 	public static FloatColor GREY = new FloatColor(0.5f, 0.5f, 0.5f, 1.0f);
-	
+	public static FloatColor BROWN = new FloatColor(0.5f, 0.2f, 0.0f, 1.0f);
 	
 	public FloatColor(float r, float g, float b, float a) {
 		setR(r);

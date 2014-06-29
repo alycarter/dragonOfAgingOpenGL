@@ -79,4 +79,37 @@ public class ItemManager {
 		}
 		return speed;
 	}
+	
+	public float getArmStrain(){
+		float strain = 0;
+		for(int i =0; i < items.size(); i++){
+			strain += items.get(i).getArmStrain();
+		}
+		return strain;
+	}
+	
+	public float getLegStrain(){
+		float strain = 0;
+		for(int i =0; i < items.size(); i++){
+			strain += items.get(i).getLegStrain();
+		}
+		return strain;
+	}
+	
+	public float getChestStrain(){
+		float strain = 0;
+		for(int i =0; i < items.size(); i++){
+			strain += items.get(i).getChestStrain();
+		}
+		return strain;
+	}
+	
+	public float getHeadStrain(){
+		float strain = 0;
+		for(int i =0; i < items.size(); i++){
+			strain += items.get(i).getHeadStrain();
+		}
+		return strain;
+	}
+	
 }

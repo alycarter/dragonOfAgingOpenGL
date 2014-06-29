@@ -23,12 +23,23 @@ public class Item {
 	private float speedModifier;
 	private float damageResistanceModifier;
 	
-	public Item(String type, String name, Level level, float speedModifier, float damageResistanceModifier) {
+	private float armStrain;
+	private float legStrain;
+	private float chestStrain;
+	private float headStrain;
+	
+	
+	public Item(String type, String name, Level level,
+			float speedModifier, float damageResistanceModifier, float armStrain, float legStrain, float chestStrain, float headStrain) {
 		texture = level.getTiledTexture(name);
 		itemName = name;
 		itemType = type;
 		this.setSpeedModifier(speedModifier);
 		this.setDamageResistanceModifier(damageResistanceModifier);
+		this.armStrain = armStrain;
+		this.legStrain = legStrain;
+		this.chestStrain = chestStrain;
+		this.headStrain = headStrain;
 	}
 	
 	public String getItemType(){
@@ -66,5 +77,20 @@ public class Item {
 	public void setDamageResistanceModifier(float damageResistanceModifier) {
 		this.damageResistanceModifier = damageResistanceModifier;
 	}
+	
+	public float getHeadStrain(){
+		return headStrain;
+	}
 
+	public float getLegStrain(){
+		return legStrain;
+	}
+	
+	public float getArmStrain(){
+		return armStrain;
+	}
+	
+	public float getChestStrain(){
+		return chestStrain;
+	}
 }
