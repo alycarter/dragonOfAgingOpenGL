@@ -20,10 +20,15 @@ public class Item {
 	private String itemName;
 	private TiledTexture texture;
 	
-	public Item(String type, String name, Level level) {
+	private float speedModifier;
+	private float damageResistanceModifier;
+	
+	public Item(String type, String name, Level level, float speedModifier, float damageResistanceModifier) {
 		texture = level.getTiledTexture(name);
 		itemName = name;
 		itemType = type;
+		this.setSpeedModifier(speedModifier);
+		this.setDamageResistanceModifier(damageResistanceModifier);
 	}
 	
 	public String getItemType(){
@@ -44,6 +49,22 @@ public class Item {
 	
 	public void render(Graphics graphics){
 		
+	}
+
+	public float getSpeedModifier() {
+		return speedModifier;
+	}
+
+	public void setSpeedModifier(float speedModifier) {
+		this.speedModifier = speedModifier;
+	}
+
+	public float getDamageResistanceModifier() {
+		return damageResistanceModifier;
+	}
+
+	public void setDamageResistanceModifier(float damageResistanceModifier) {
+		this.damageResistanceModifier = damageResistanceModifier;
 	}
 
 }

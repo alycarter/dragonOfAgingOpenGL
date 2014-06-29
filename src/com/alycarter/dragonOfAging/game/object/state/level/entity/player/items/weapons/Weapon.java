@@ -5,8 +5,8 @@ import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.I
 
 public abstract class Weapon extends Item {
 
-	public Weapon(String name, Level level) {
-		super(WEAPON_TYPE, name, level);
+	public Weapon(String name, Level level, float speedModifier, float damageResistanceModifier) {
+		super(WEAPON_TYPE, name, level, speedModifier, damageResistanceModifier);
 		// TODO Auto-generated constructor stub
 	}
 	

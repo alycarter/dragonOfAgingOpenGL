@@ -292,7 +292,7 @@ public abstract class DynamicEntity extends Entity {
 	public void takeDamage(Entity e, float damage) {
 		if(takesDamage && damageCoolDown <= 0){
 			health -= damage;
-			damageCoolDown = damageCoolDownTime;
+			triggerDamageCoolDown();
 			if(health <=0){
 				health = 0;
 				kill();
@@ -324,7 +324,24 @@ public abstract class DynamicEntity extends Entity {
 		return health;
 	}
 	
+	public void setHealth(float health){
+		this.health = health;
+	}
+	
 	public float getMaxHealth(){
 		return maxHealth;
+	}
+	
+	public boolean doesTakedamage(){
+		return takesDamage;
+	}
+	
+	public float getDamageCoolDown(){
+		return damageCoolDown;
+	}
+	
+	public void triggerDamageCoolDown(){
+		damageCoolDown = damageCoolDownTime;
+		
 	}
 }

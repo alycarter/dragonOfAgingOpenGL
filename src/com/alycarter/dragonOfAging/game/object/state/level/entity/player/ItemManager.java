@@ -58,4 +58,25 @@ public class ItemManager {
 		}
 	}
 	
+	public float getDamageResitanceModifier(){
+		float res = 0;
+		for(int i =0; i < items.size(); i++){
+			res += items.get(i).getDamageResistanceModifier();
+		}
+		if(res < -1){
+			res = -1;
+		}
+		return res;
+	}
+	
+	public float getSpeedModifier(){
+		float speed = 0;
+		for(int i =0; i < items.size(); i++){
+			speed += items.get(i).getSpeedModifier();
+		}
+		if(speed < -1){
+			speed = -1;
+		}
+		return speed;
+	}
 }

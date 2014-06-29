@@ -4,8 +4,8 @@ import com.alycarter.dragonOfAging.game.object.state.level.Level;
 
 public class ChestClothing extends Item {
 
-	public ChestClothing(String name, Level level) {
-		super(CHEST_CLOTHING_TYPE, name, level);
+	public ChestClothing(String name, Level level, float speedModifier, float damageResistanceModifier) {
+		super(CHEST_CLOTHING_TYPE, name, level,speedModifier, damageResistanceModifier);
 		// TODO Auto-generated constructor stub
 	}
 

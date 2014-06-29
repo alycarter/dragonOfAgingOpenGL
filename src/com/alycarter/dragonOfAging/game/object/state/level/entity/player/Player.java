@@ -8,11 +8,14 @@ import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.math.Vector3;
 import com.alycarter.dragonOfAging.game.object.state.level.Level;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.DynamicEntity;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.Entity;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.Item;
 
 public class Player extends DynamicEntity {
 
 	private Vector3 direction;
+	
+	private static final float BASE_WALKING_SPEED = 25;
 	
 	private float acceleration;
 	
@@ -28,7 +31,7 @@ public class Player extends DynamicEntity {
 		itemManager.addTypeLimit(Item.CHEST_CLOTHING_TYPE);
 		itemManager.addTypeLimit(Item.WEAPON_TYPE);
 		direction = new Vector3(0, 1, 0);
-		acceleration = 15;
+		acceleration = BASE_WALKING_SPEED;
 		getSprite().appendFrameLayer(level.getTiledTexture("playerBase"));
 		for(int i = 0; i < 8; i++){
 			//add walking frames
@@ -38,6 +41,7 @@ public class Player extends DynamicEntity {
 
 	@Override
 	public void onUpdate(Level level, Controls controls) {
+		acceleration = BASE_WALKING_SPEED + (BASE_WALKING_SPEED*itemManager.getSpeedModifier());
 		float x = 0;
 		float y = 0;
 		if(controls.isKeyHeld(Keyboard.KEY_W)){
@@ -98,4 +102,17 @@ public class Player extends DynamicEntity {
 		direction = new Vector3(dir);
 	}
 
+
+	@Override
+	public void takeDamage(Entity e, float damage) {
+		if(doesTakedamage() && getDamageCoolDown() <= 0){
+			setHealth(getHealth() - (damage+(damage * itemManager.getDamageResitanceModifier())));
+			triggerDamageCoolDown();
+			if(getHealth() <=0){
+				setHealth(0);
+				kill();
+			}
+		}
+	}
+	
 }

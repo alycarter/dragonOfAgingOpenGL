@@ -5,7 +5,7 @@ import com.alycarter.dragonOfAging.game.object.state.level.Level;
 public class Stat extends Item {
 
 	public Stat(String name, Level level) {
-		super(STAT_TYPE, name, level);
+		super(STAT_TYPE, name, level, 0,0);
 		// TODO Auto-generated constructor stub
 	}
 

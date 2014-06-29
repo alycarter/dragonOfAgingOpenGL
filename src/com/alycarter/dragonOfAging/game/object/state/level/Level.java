@@ -81,13 +81,13 @@ public class Level extends State {
 		for(int i = 0 ;i < 5; i++){
 			entities.add(new Slime(this,50, 50, 0));				
 		}
-		entities.add(new ItemPickUp(this, new ArmClothing("leatherArms", this), 50, 51, 0));
-		entities.add(new ItemPickUp(this, new ChestClothing("leatherChestPlate", this), 51, 52, 0));
-		entities.add(new ItemPickUp(this, new LegClothing("leatherLegs", this), 52, 53, 0));
-		entities.add(new ItemPickUp(this, new ArmClothing("ironArms", this), 50, 49, 0));
-		entities.add(new ItemPickUp(this, new ChestClothing("ironChestPlate", this), 51, 48, 0));
-		entities.add(new ItemPickUp(this, new LegClothing("ironLegs", this), 52, 47, 0));
-		entities.add(new ItemPickUp(this, new Sword("sword", this, 20, 1, 0.5f, 0.1f, 0.8f, 0.05f, 0.2f, FloatColor.GREY, new FloatColor(0.5f, 0.2f, 0.0f, 1.0f)), 50, 47, 0));
+		entities.add(new ItemPickUp(this, new ArmClothing("leatherArms", this, -0.05f, -0.1f), 50, 51, 0));
+		entities.add(new ItemPickUp(this, new ChestClothing("leatherChestPlate", this, -0.05f, -0.1f), 51, 52, 0));
+		entities.add(new ItemPickUp(this, new LegClothing("leatherLegs", this, -0.05f, -0.1f), 52, 53, 0));
+		entities.add(new ItemPickUp(this, new ArmClothing("ironArms", this, -0.1f, -0.2f), 50, 49, 0));
+		entities.add(new ItemPickUp(this, new ChestClothing("ironChestPlate", this, -0.1f, -0.2f), 51, 48, 0));
+		entities.add(new ItemPickUp(this, new LegClothing("ironLegs", this, -0.1f, -0.2f), 52, 47, 0));
+		entities.add(new ItemPickUp(this, new Sword("sword", this, -0.1f, 20, 1, 0.5f, 0.1f, 0.8f, 0.05f, 0.2f, FloatColor.GREY, new FloatColor(0.5f, 0.2f, 0.0f, 1.0f)), 50, 47, 0));
 	}
 	
 	private void loadTextures(Graphics graphics){
