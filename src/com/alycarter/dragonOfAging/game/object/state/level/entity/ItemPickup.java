@@ -3,6 +3,7 @@ package com.alycarter.dragonOfAging.game.object.state.level.entity;
 import com.alycarter.dragonOfAging.game.controls.Controls;
 import com.alycarter.dragonOfAging.game.graphics.AnimationTimer;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
+import com.alycarter.dragonOfAging.game.math.Vector3;
 import com.alycarter.dragonOfAging.game.object.state.level.Level;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.Player;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.Item;
@@ -14,8 +15,8 @@ public class ItemPickUp extends DynamicEntity {
 	
 	private static final float PICK_UP_DELAY = 2;
 	
-	public ItemPickUp(Level level, Item item, float x, float y, float z) {
-		super(level,"pick up", "itemPickup", x, y, z, 0.5f, 0.2f, 1,1,2, true);
+	public ItemPickUp(Level level, Item item, Vector3 position) {
+		super(level,"pick up", "itemPickup", position, 0.5f, 0.2f, 1,1,2, true);
 		this.item=item;
 		setWeight(100);
 		setDrag(20);

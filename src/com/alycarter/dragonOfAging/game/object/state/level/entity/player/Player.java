@@ -65,6 +65,8 @@ public class Player extends DynamicEntity {
 		if(controls.isKeyHeld(Keyboard.KEY_D)){
 			x++;
 		}
+		x+=controls.getController().getAxisValue(1);
+		y+=controls.getController().getAxisValue(0);
 		if(x != 0 || y != 0){
 			direction.setX(x);
 			direction.setY(y);
@@ -75,7 +77,7 @@ public class Player extends DynamicEntity {
 		}else{
 			dampenVelocity(level.getDeltaTime()*acceleration, level.getDeltaTime()*acceleration, 0);
 		}
-		if(controls.isKeyHeld(Keyboard.KEY_SPACE) && isGrounded()){
+		if((controls.isKeyHeld(Keyboard.KEY_SPACE) || controls.getController().isButtonPressed(0)) && isGrounded()){
 			addForce(0, 0, 10);
 		}
 		

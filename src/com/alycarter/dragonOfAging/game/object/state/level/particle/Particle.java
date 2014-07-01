@@ -11,6 +11,8 @@ public class Particle{
 	
 	private float life;
 	
+	private float weight;
+	
 	private Vector3 position;
 	
 	private Vector3 velocity;
@@ -22,10 +24,11 @@ public class Particle{
 		color = new FloatColor(1.0f, 1.0f, 1.0f, 1.0f);
 		position = new Vector3();
 		velocity = new Vector3();
+		weight = 0;
 	}
 	
 	public void create(float timeToLive, float size, float positionX, float positionY, float positionZ,
-			float r, float g, float b, float a, float velocityX, float velocityY, float velocityZ){
+			float r, float g, float b, float a, float velocityX, float velocityY, float velocityZ, float weight){
 		color.setR(r);
 		color.setB(b);
 		color.setG(g);
@@ -38,10 +41,11 @@ public class Particle{
 		velocity.setZ(velocityZ);
 		this.size = size;
 		life = timeToLive;
+		this.weight = weight;
 	}
 
 	public void update(Level level) {
-		velocity.setZ(velocity.getZ() - level.getDeltaTime()*5);
+		velocity.setZ(velocity.getZ() - (level.getDeltaTime()*weight));
 		Vector3 deltaVelocity = new Vector3(velocity);
 		deltaVelocity.scale(level.getDeltaTime());
 		position.add(deltaVelocity);

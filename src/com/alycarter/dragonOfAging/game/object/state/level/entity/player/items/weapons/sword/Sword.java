@@ -96,7 +96,7 @@ public class Sword extends Weapon {
 			if(delay <=0){
 				if(part.getPartType().equals(SwordPart.BLADE_PART)){
 					level.getParticles().createParticle(false, 0.05f, part.getBoundingBox().getX(), swordPos.getX(),swordPos.getY(), swordPos.getZ(), 
-						part.getColor().getR(), part.getColor().getG(), part.getColor().getB(), part.getColor().getA(), 0, 0, 0);
+						part.getColor().getR(), part.getColor().getG(), part.getColor().getB(), part.getColor().getA(), 0, 0, 0, 0);
 				}
 			}
 			part.getPosition().set(swordPos);
@@ -124,6 +124,8 @@ public class Sword extends Weapon {
 		if(controls.isKeyHeld(Keyboard.KEY_K)){
 			y++;
 		}	
+		x += controls.getController().getAxisValue(3);
+		y += controls.getController().getAxisValue(2);
 		return new Vector3(x, y, 0);
 	}
 	

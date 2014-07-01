@@ -10,8 +10,8 @@ public class Slime extends DynamicEntity {
 
 	private float jumpDelay = 2;
 	
-	public Slime(Level level, float x, float y, float z) 	{
-		super(level,"slime", ENEMY_TYPE, x, y, z, 0.7f, 0.3f, 1.0f, 1.0f, 1.0f,true,5,true, 0.5f);
+	public Slime(Level level, Vector3 position) 	{
+		super(level,"slime", ENEMY_TYPE, position, 0.7f, 0.3f, 1.0f, 1.0f, 1.0f,true,5,true, 0.5f);
 		getSprite().appendFrameLayer(level.getTiledTexture("slime"));
 		//normal
 		getSprite().addAnimationTimer(new AnimationTimer(0, 1, 1, false), true);
@@ -62,7 +62,7 @@ public class Slime extends DynamicEntity {
 					direction.normalize();
 					direction.setZ(1.0f);
 					level.getParticles().createParticle(false, 3, 0.1f, getPosition().getX()+(x*getBoundingBox().getX()/2), getPosition().getY(), getPosition().getZ(),
-							0.3f, 1.0f, 0.3f, 1.0f, direction.getX(), direction.getY(), direction.getZ());
+							0.3f, 1.0f, 0.3f, 1.0f, direction.getX(), direction.getY(), direction.getZ(), 5);
 				}
 			}
 			break;

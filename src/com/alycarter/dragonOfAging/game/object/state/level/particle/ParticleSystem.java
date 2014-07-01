@@ -47,15 +47,15 @@ public class ParticleSystem {
 	}
 	
 	public void createParticle(boolean forceCreate, float timeToLive, float size, float positionX, float positionY, float positionZ,
-			float r, float g, float b, float a, float velocityX, float velocityY, float velocityZ){
+			float r, float g, float b, float a, float velocityX, float velocityY, float velocityZ, float weight){
 		if(!deadParticles.isEmpty()){
-			deadParticles.get(deadParticles.size()-1).create(timeToLive, size, positionX, positionY, positionZ, r, g, b, a, velocityX, velocityY, velocityZ);
+			deadParticles.get(deadParticles.size()-1).create(timeToLive, size, positionX, positionY, positionZ, r, g, b, a, velocityX, velocityY, velocityZ, weight);
 			activeParticles.add(deadParticles.remove(deadParticles.size()-1));
 		}else{
 			System.out.println("out of particles");
 			if(forceCreate){
 				activeParticles.add(activeParticles.remove(0));
-				activeParticles.get(activeParticles.size()-1).create(timeToLive, size, positionX, positionY, positionZ, r, g, b, a, velocityX, velocityY, velocityZ);
+				activeParticles.get(activeParticles.size()-1).create(timeToLive, size, positionX, positionY, positionZ, r, g, b, a, velocityX, velocityY, velocityZ, weight);
 			}
 		}
 		

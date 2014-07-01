@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import com.alycarter.dragonOfAging.game.graphics.FloatColor;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
+import com.alycarter.dragonOfAging.game.math.Vector3;
 
 public class Map {
 
@@ -20,19 +21,29 @@ public class Map {
 	private final static Point LEFT = new Point(-1, 0);
 	private final static Point RIGHT = new Point(1, 0);
 	
-	
 	private Point size;
 	private float heightMap[];
 	private TiledTexture mapTexture;
 	private int shadow;
 	private long seed = 0;
 	
+	private ArrayList<Vector3> enemySpawnLocations;
+	private ArrayList<Vector3> pickupSpawnLocations;
+	
+	private Vector3 playerSpawnLocation;
+	private Vector3 levelExitLocation;
+	
+	
 	public Map(Level level, int shadow) {
 		mapTexture = level.getTiledTexture("map");
 		this.shadow = shadow;
+		enemySpawnLocations = new ArrayList<Vector3>();
+		pickupSpawnLocations = new ArrayList<Vector3>();
 	}
 	
 	public void genMap(int width, int height, int rooms, long seed){
+		enemySpawnLocations.clear();
+		pickupSpawnLocations.clear();
 		this.seed = seed;
 		Random random = new Random(seed);
 		size = new Point(width, height);
@@ -43,7 +54,17 @@ public class Map {
 		ArrayList<Node> openNodes = new ArrayList<Node>();
 		openNodes.add(new Node(new Point(width/2, height/2), UP));
 		for(int i = 0; i<rooms && openNodes.size()>0; i++){
-			genCircle(openNodes, (int)(random.nextFloat()*openNodes.size()), (int)(random.nextFloat()*7)+5, random);
+			Vector3 center = genCircle(openNodes, (int)(random.nextFloat()*openNodes.size()), (int)(random.nextFloat()*7)+5, random);
+			if (i==0) {
+				playerSpawnLocation = center;
+			}else{
+				if(i == rooms-1 || openNodes.size() == 0){
+					levelExitLocation = center;
+				}else{
+					enemySpawnLocations.add(center);
+					pickupSpawnLocations.add(center);
+				}
+			}
 		}
 	}
 	
@@ -51,7 +72,7 @@ public class Map {
 		return seed;
 	}
 	
-	private void genCircle(ArrayList<Node> nodes, int nodeToUse, int diameter, Random random){
+	private Vector3 genCircle(ArrayList<Node> nodes, int nodeToUse, int diameter, Random random){
 		Node node = nodes.remove(nodeToUse);
 		int radius = diameter/2;
 		Point center = new Point(node.location.x+(node.direction.x * radius), node.location.y+(node.direction.y * radius));
@@ -75,6 +96,8 @@ public class Map {
 		node.location.x+=diameter*node.direction.x;
 		node.location.y+=diameter*node.direction.y;
 		nodes.add(node);
+		Vector3 middle = new Vector3(center.x+0.5f, center.y+0.5f, getHeight(center.x, center.y));
+		return middle;
 	}
 	
 	private void setHeight(int x, int y, float z){
@@ -157,4 +180,37 @@ public class Map {
 			this.direction = direction;
 		}
 	}
+	
+	public ArrayList<Vector3> getEnemySpawnLocations(){
+		return enemySpawnLocations;
+	}
+	
+	public ArrayList<Vector3> getPickupSpawnLocations(){
+		return pickupSpawnLocations;
+	}
+	
+	public Vector3 getPlayerSpawnLocation(){
+		return playerSpawnLocation;
+	}
+	
+	public Vector3 getLevelExitLocation(){
+		return levelExitLocation;
+	}
+	
+	public Vector3 getNextEnemySpawnPosition(){
+		if(enemySpawnLocations.size() != 0){
+			return enemySpawnLocations.remove((int) (Math.random()*enemySpawnLocations.size()));
+		}else{
+			return null;
+		}
+	}
+	
+	public Vector3 getNextPickupSpawnPosition(){
+		if(pickupSpawnLocations.size() != 0){
+			return pickupSpawnLocations.remove((int) (Math.random()*pickupSpawnLocations.size()));
+		}else{
+			return null;
+		}
+	}
+	
 }

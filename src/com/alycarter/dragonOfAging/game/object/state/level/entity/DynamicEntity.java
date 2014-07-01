@@ -38,6 +38,30 @@ public abstract class DynamicEntity extends Entity {
 	public DynamicEntity(Level level, String name, String type, float x, float y, float z,
 			float width, float depth, float height, float imageWidth, float imageHeight, boolean collidesWithEntities, float health, boolean takesDamage, float damageCoolDown) {
 		super(name, type, x, y, z, width, depth, height, collidesWithEntities);
+		setUpEntity(level, imageWidth, imageHeight, health, takesDamage, damageCoolDown);
+	}
+	
+	public DynamicEntity(Level level, String name, String type, float x, float y, float z,
+			float width, float depth, float height, float imageWidth, float imageHeight, boolean collidesWithEntities) {
+		super(name, type, x, y, z, width, depth, height, collidesWithEntities);
+		setUpEntity(level, imageWidth, imageHeight, 0, false, 0);
+	}
+	
+	public DynamicEntity(Level level, String name, String type, Vector3 position,
+			float width, float depth, float height, float imageWidth, float imageHeight, boolean collidesWithEntities, float health, boolean takesDamage, float damageCoolDown) {
+		super(name, type, position.getX(), position.getY(), position.getZ(), width, depth, height, collidesWithEntities);
+		setUpEntity(level, imageWidth, imageHeight, health, takesDamage, damageCoolDown);
+	}
+	
+	public DynamicEntity(Level level, String name, String type,  Vector3 position,
+			float width, float depth, float height, float imageWidth, float imageHeight, boolean collidesWithEntities) {
+		super(name, type, position.getX(), position.getY(), position.getZ(), width, depth, height, collidesWithEntities);
+		setUpEntity(level, imageWidth, imageHeight, 0, false, 0);
+	}
+	
+	
+	
+	private void setUpEntity(Level level, float imageWidth, float imageHeight, float health, boolean takesDamage, float damageCoolDown){
 		sprite = new Sprite(imageWidth, imageHeight, 0, imageHeight/-2.0f);
 		velocity = new Vector3(0, 0, 0);
 		drag = 4.0f;
@@ -50,23 +74,6 @@ public abstract class DynamicEntity extends Entity {
 		this.takesDamage = takesDamage;
 		this.damageCoolDownTime = damageCoolDown;
 		this.damageCoolDown = 0;
-	}
-	
-	public DynamicEntity(Level level, String name, String type, float x, float y, float z,
-			float width, float depth, float height, float imageWidth, float imageHeight, boolean collidesWithEntities) {
-		super(name, type, x, y, z, width, depth, height, collidesWithEntities);
-		sprite = new Sprite(imageWidth, imageHeight, 0, imageHeight/-2.0f);
-		velocity = new Vector3(0, 0, 0);
-		drag = 4.0f;
-		weight = 50.0f;
-		maxStepUp = 0.2f;
-		bouncyness = 0.3f;
-		grounded = false;
-		this.health = 0;
-		maxHealth = health;
-		takesDamage = false;
-		damageCoolDownTime = 0;
-		damageCoolDown = 0;
 	}
 
 	public abstract void onUpdate(Level level, Controls controls);

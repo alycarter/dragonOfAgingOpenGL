@@ -9,5 +9,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Program Files/lwjgl/lwjgl-2.9.1/jar/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/lwjgl/lwjgl-2.9.1/jar/jinput.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

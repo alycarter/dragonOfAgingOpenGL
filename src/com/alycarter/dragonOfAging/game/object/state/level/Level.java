@@ -14,6 +14,7 @@ import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
 import com.alycarter.dragonOfAging.game.object.state.State;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.Entity;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.Fire;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.ItemPickUp;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.Slime;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.Player;
@@ -22,6 +23,7 @@ import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.C
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.LegClothing;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.weapons.sword.LongSword;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.weapons.sword.Spear;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.weapons.sword.Zweihander;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.Particle;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.ParticleSystem;
 import com.alycarter.dragonOfAging.game.object.state.level.uiObjects.LevelUIObject;
@@ -68,28 +70,31 @@ public class Level extends State {
 		shadowBuffer = graphics.addTexture(graphics.getResolution().x, graphics.getResolution().y*2, this);
 		shadow = getTiledTexture("shadow").getTileTextureID(0);
 		map =new Map(this, shadowBuffer);
+		player = new Player(this,0, 0);
 		particles = new ParticleSystem(2000);
-		loadLevel(0);
+		loadLevel((long)(Math.random()*(Long.MAX_VALUE-1)));
 	}
 	
 	private void loadLevel(long seed){
 		map.genMap(100, 100, 30, seed);
 		entities.clear();
-		player = new Player(this,(float)map.getSize().getX()/2.0f, (float)map.getSize().getY()/2.0f);
 		entities.add(player);
+		player.updateAge();
+		player.getPosition().set(map.getPlayerSpawnLocation());
 		camera = new Camera(player.getPosition());
-		for(int i = 0 ;i < 5; i++){
-			entities.add(new Slime(this,50, 50, 0));				
+		while(map.getEnemySpawnLocations().size()>0){
+			entities.add(new Slime(this, map.getNextEnemySpawnPosition()));				
 		}
-		entities.add(new ItemPickUp(this, new ArmClothing("leatherArms", this, -0.05f, -0.1f, 0.05f, 0, 0, 0), 50, 53, 0));
-		entities.add(new ItemPickUp(this, new ChestClothing("leatherChestPlate", this, -0.05f, -0.1f, 0, 0, 0.05f, 0), 51, 53, 0));
-		entities.add(new ItemPickUp(this, new LegClothing("leatherLegs", this, -0.05f, -0.1f, 0, 0.05f, 0, 0), 52, 53, 0));
-		entities.add(new ItemPickUp(this, new ArmClothing("ironArms", this, -0.1f, -0.2f, 0.1f, 0, 0, 0), 50, 55, 0));
-		entities.add(new ItemPickUp(this, new ChestClothing("ironChestPlate", this, -0.1f, -0.2f, 0, 0, 0.1f, 0), 51, 55, 0));
-		entities.add(new ItemPickUp(this, new LegClothing("ironLegs", this, -0.1f, -0.2f, 0, 0.1f, 0, 0), 52, 55, 0));
-		entities.add(new ItemPickUp(this, new LongSword(this), 50, 57, 0));
-		entities.add(new ItemPickUp(this, new Spear(this), 51, 57, 0));
-		entities.add(new ItemPickUp(this, new Zweihander(this), 52, 57, 0));	
+		entities.add(new ItemPickUp(this, new ArmClothing("leatherArms", this, -0.05f, -0.1f, 0.05f, 0, 0, 0),map.getNextPickupSpawnPosition()));
+		entities.add(new ItemPickUp(this, new ChestClothing("leatherChestPlate", this, -0.05f, -0.1f, 0, 0, 0.05f, 0),map.getNextPickupSpawnPosition()));
+		entities.add(new ItemPickUp(this, new LegClothing("leatherLegs", this, -0.05f, -0.1f, 0, 0.05f, 0, 0), map.getNextPickupSpawnPosition()));
+		entities.add(new ItemPickUp(this, new ArmClothing("ironArms", this, -0.1f, -0.2f, 0.1f, 0, 0, 0), map.getNextPickupSpawnPosition()));
+		entities.add(new ItemPickUp(this, new ChestClothing("ironChestPlate", this, -0.1f, -0.2f, 0, 0, 0.1f, 0), map.getNextPickupSpawnPosition()));
+		entities.add(new ItemPickUp(this, new LegClothing("ironLegs", this, -0.1f, -0.2f, 0, 0.1f, 0, 0), map.getNextPickupSpawnPosition()));
+		entities.add(new ItemPickUp(this, new LongSword(this), map.getNextPickupSpawnPosition()));
+		entities.add(new ItemPickUp(this, new Spear(this), map.getNextPickupSpawnPosition()));
+		entities.add(new ItemPickUp(this, new Zweihander(this), map.getNextPickupSpawnPosition()));	
+		entities.add(new Fire(this, map.getLevelExitLocation()));	
 	}
 	
 	private void loadTextures(Graphics graphics){
@@ -105,27 +110,22 @@ public class Level extends State {
 			tilesTextures.add(new TiledTexture(graphics, this, "slime", ImageIO.read(Level.class.getResource("/slime.png")), 12, 12));
 			tilesTextures.add(new TiledTexture(graphics, this, "shadow", ImageIO.read(Level.class.getResource("/shadow.png")), 12, 12));
 			tilesTextures.add(new TiledTexture(graphics, this, "sword", ImageIO.read(Level.class.getResource("/sword.png")), 12, 12));
+			tilesTextures.add(new TiledTexture(graphics, this, "fire", ImageIO.read(Level.class.getResource("/fire.png")), 12, 12));
 		} catch (IOException e) {e.printStackTrace();}
 	}
 
 	@Override
 	public void update(Game game) {
-		if(game.getControls().isKeyTyped(Keyboard.KEY_T)){
-			loadLevel(map.getCurrentSeed());
-		}
-		if(game.getControls().isKeyTyped(Keyboard.KEY_R)){
-			loadLevel((long)(Math.random()*(Long.MAX_VALUE-1)));
-		}
-		if(game.getControls().isKeyHeld(Keyboard.KEY_EQUALS)){
+		if(game.getControls().isKeyHeld(Keyboard.KEY_EQUALS) || game.getControls().getController().isButtonPressed(4)){
 			unitResolution-=deltaTime * 20;
 		}
-		if(game.getControls().isKeyHeld(Keyboard.KEY_MINUS)){
+		if(game.getControls().isKeyHeld(Keyboard.KEY_MINUS) || game.getControls().getController().isButtonPressed(5)){
 			unitResolution+=deltaTime * 20;
 		}
-		if(game.getControls().isKeyTyped(Keyboard.KEY_BACK)){
+		if(game.getControls().isKeyTyped(Keyboard.KEY_BACK) || game.getControls().getController().isButtonPressed(6)){
 			unitResolution = 92;
 		}
-		if(game.getControls().isKeyTyped(Keyboard.KEY_ESCAPE)){
+		if(game.getControls().isKeyTyped(Keyboard.KEY_ESCAPE) || game.getControls().getController().isButtonPressed(3)){
 			markForRemoval();
 		}
 		if(game.getControls().isKeyTyped(Keyboard.KEY_P)){
@@ -141,6 +141,9 @@ public class Level extends State {
 		camera.update(this);
 		//remove any objects that are marked for removal during this frame
 		removeMarkedObjects();
+		if(player.getPosition().distanceTo(map.getLevelExitLocation()) < 2){
+			loadLevel((long)(Math.random()*(Long.MAX_VALUE-1)));
+		}
 	}
 	
 	private void updateObjects(Controls controls){
