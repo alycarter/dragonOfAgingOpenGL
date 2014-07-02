@@ -32,8 +32,10 @@ public abstract class DynamicEntity extends Entity {
 	private boolean takesDamage;
 	private float damageCoolDown;
 	private float damageCoolDownTime;
+
+	private FloatColor baseColor;
 	
-	private static final FloatColor DAMAGE_COLOR = new FloatColor(1.0f,0.25f,0.25f, 1.0f);
+	private static final FloatColor DAMAGE_COLOR = new FloatColor(0.8f,0.0f,0.0f, 1.0f);
 	
 	public DynamicEntity(Level level, String name, String type, float x, float y, float z,
 			float width, float depth, float height, float imageWidth, float imageHeight, boolean collidesWithEntities, float health, boolean takesDamage, float damageCoolDown) {
@@ -74,6 +76,7 @@ public abstract class DynamicEntity extends Entity {
 		this.takesDamage = takesDamage;
 		this.damageCoolDownTime = damageCoolDown;
 		this.damageCoolDown = 0;
+		baseColor = FloatColor.WHITE;
 	}
 
 	public abstract void onUpdate(Level level, Controls controls);
@@ -134,15 +137,7 @@ public abstract class DynamicEntity extends Entity {
 		if(takesDamage && damageCoolDown > 0){
 			sprite.render(graphics, DAMAGE_COLOR, getPosition().getX(), getPosition().getY()-getPosition().getZ(), getPosition().getY());	
 		}else{
-			sprite.render(graphics, getPosition().getX(), getPosition().getY()-getPosition().getZ(), getPosition().getY());
-		}
-		if(takesDamage){
-			graphics.drawRectangle(FloatColor.RED, getPosition().getX(), getPosition().getY()-getPosition().getZ()-getBoundingBox().getZ(),
-					getPosition().getY(), 1 , 0.1f, 0);
-			graphics.drawRectangle(FloatColor.GREEN, getPosition().getX(),
-					getPosition().getY()-getPosition().getZ()-getBoundingBox().getZ(),
-					getPosition().getY()+0.001f, 1*(getHealth()/getMaxHealth()) , 0.1f, 0);
-				
+			sprite.render(graphics, baseColor, getPosition().getX(), getPosition().getY()-getPosition().getZ(), getPosition().getY());
 		}
 	}
 	
@@ -348,7 +343,14 @@ public abstract class DynamicEntity extends Entity {
 	}
 	
 	public void triggerDamageCoolDown(){
-		damageCoolDown = damageCoolDownTime;
-		
+		damageCoolDown = damageCoolDownTime;	
+	}
+	
+	public void setBaseColor(FloatColor color){
+		baseColor = color;
+	}
+	
+	public FloatColor getBaseColor(){
+		return baseColor;
 	}
 }

@@ -2,6 +2,7 @@ package com.alycarter.dragonOfAging.game.object.state.level.entity;
 
 import com.alycarter.dragonOfAging.game.controls.Controls;
 import com.alycarter.dragonOfAging.game.graphics.AnimationTimer;
+import com.alycarter.dragonOfAging.game.graphics.FloatColor;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.math.Vector3;
 import com.alycarter.dragonOfAging.game.object.state.level.Level;
@@ -10,8 +11,8 @@ public class Slime extends DynamicEntity {
 
 	private float jumpDelay = 2;
 	
-	public Slime(Level level, Vector3 position) 	{
-		super(level,"slime", ENEMY_TYPE, position, 0.7f, 0.3f, 1.0f, 1.0f, 1.0f,true,5,true, 0.5f);
+	public Slime(Level level, Vector3 position, FloatColor color) 	{
+		super(level,"slime", ENEMY_TYPE, position, 0.7f, 0.3f, 1.0f, 1.0f, 1.0f,true,5,true, 0.25f);
 		getSprite().appendFrameLayer(level.getTiledTexture("slime"));
 		//normal
 		getSprite().addAnimationTimer(new AnimationTimer(0, 1, 1, false), true);
@@ -21,6 +22,7 @@ public class Slime extends DynamicEntity {
 		getSprite().addAnimationTimer(new AnimationTimer(3, 4, 1, false), false);
 		//land
 		getSprite().addAnimationTimer(new AnimationTimer(4, 6, 8, false), false);
+		setBaseColor(level.getMap().getLevelType().getLevelColor());
 	}
 
 	@Override
@@ -62,7 +64,7 @@ public class Slime extends DynamicEntity {
 					direction.normalize();
 					direction.setZ(1.0f);
 					level.getParticles().createParticle(false, 3, 0.1f, getPosition().getX()+(x*getBoundingBox().getX()/2), getPosition().getY(), getPosition().getZ(),
-							0.3f, 1.0f, 0.3f, 1.0f, direction.getX(), direction.getY(), direction.getZ(), 5);
+							getBaseColor().getR(), getBaseColor().getG(), getBaseColor().getB(), getBaseColor().getA(), direction.getX(), direction.getY(), direction.getZ(), 5);
 				}
 			}
 			break;

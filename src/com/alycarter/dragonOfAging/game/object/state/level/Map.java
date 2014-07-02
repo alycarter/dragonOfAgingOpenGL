@@ -33,15 +33,20 @@ public class Map {
 	private Vector3 playerSpawnLocation;
 	private Vector3 levelExitLocation;
 	
+	private boolean inisialised;
+	
+	private LevelType levelType;
 	
 	public Map(Level level, int shadow) {
 		mapTexture = level.getTiledTexture("map");
 		this.shadow = shadow;
 		enemySpawnLocations = new ArrayList<Vector3>();
 		pickupSpawnLocations = new ArrayList<Vector3>();
+		inisialised = false;
 	}
 	
-	public void genMap(int width, int height, int rooms, long seed){
+	public void genMap(LevelType levelType, int width, int height, int rooms, long seed){
+		this.levelType = levelType;
 		enemySpawnLocations.clear();
 		pickupSpawnLocations.clear();
 		this.seed = seed;
@@ -66,6 +71,7 @@ public class Map {
 				}
 			}
 		}
+		inisialised = true;
 	}
 	
 	public long getCurrentSeed(){
@@ -120,11 +126,11 @@ public class Map {
 	}
 	
 	private void renderTexture(Graphics graphics, float left, float right, float top, float bottom){
-		graphics.bindTexture(mapTexture.getTileTextureID(0));
+		graphics.bindTexture(mapTexture.getTileTextureID(levelType.getTextureOffset()));
 		for(int y =(int)Math.ceil(bottom); y > Math.floor(top)-1; y--){	
 			for(int x = (int) Math.floor(left); x < Math.ceil(right); x++){
 				float height = getHeight(x, y);
-				float value = 1-(height/1.5f);
+				float value = 1-(height/2);
 				FloatColor color = new FloatColor(value, value, value, 1.0f);
 				float xPos = x + 0.5f;
 				float yPos = y + 0.5f - height;
@@ -211,6 +217,14 @@ public class Map {
 		}else{
 			return null;
 		}
+	}
+	
+	public boolean isInisialised(){
+		return inisialised;
+	}
+	
+	public LevelType getLevelType(){
+		return levelType;
 	}
 	
 }

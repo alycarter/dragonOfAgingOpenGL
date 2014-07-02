@@ -4,6 +4,7 @@ import org.lwjgl.input.Keyboard;
 
 import com.alycarter.dragonOfAging.game.controls.Controls;
 import com.alycarter.dragonOfAging.game.graphics.AnimationTimer;
+import com.alycarter.dragonOfAging.game.graphics.FloatColor;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.math.Vector3;
 import com.alycarter.dragonOfAging.game.object.state.level.Level;
@@ -93,6 +94,12 @@ public class Player extends DynamicEntity {
 		angle%=360;
 		getSprite().setCurrentAnimationTimer((int)(angle/45));
 		itemManager.render(graphics);
+		graphics.drawRectangle(FloatColor.RED, getPosition().getX(), getPosition().getY()-getPosition().getZ()-getBoundingBox().getZ(),
+				getPosition().getY(), 1 , 0.1f, 0);
+		graphics.drawRectangle(FloatColor.GREEN, getPosition().getX(),
+				getPosition().getY()-getPosition().getZ()-getBoundingBox().getZ(),
+				getPosition().getY()+0.001f, 1*(getHealth()/getMaxHealth()) , 0.1f, 0);
+			
 	}
 
 	public Item pickUpItem(Item item){

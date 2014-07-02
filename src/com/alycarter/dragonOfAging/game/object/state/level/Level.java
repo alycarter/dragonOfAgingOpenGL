@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.alycarter.dragonOfAging.game.Game;
 import com.alycarter.dragonOfAging.game.controls.Controls;
+import com.alycarter.dragonOfAging.game.graphics.FloatColor;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
 import com.alycarter.dragonOfAging.game.object.state.State;
@@ -77,14 +78,41 @@ public class Level extends State {
 	}
 	
 	private void loadLevel(long seed){
-		map.genMap(100, 100, 30, seed);
+		if(!map.isInisialised()){
+			map.genMap(LevelType.FOREST_LEVEL,100, 100, 15, seed);
+		}else{
+			switch (map.getLevelType().getLevelName()){
+			case LevelType.FOREST_NAME:
+				map.genMap(LevelType.LAVA_LEVEL, 100, 100, 15, seed);
+				break;
+			case LevelType.LAVA_NAME:
+				map.genMap(LevelType.CAVE_LEVEL, 100, 100, 15, seed);
+				break;
+			case LevelType.CAVE_NAME:
+				map.genMap(LevelType.DESERT_LEVEL, 100, 100, 15, seed);
+				break;
+			case LevelType.DESERT_NAME:
+				map.genMap(LevelType.SNOW_LEVEL, 100, 100, 15, seed);
+				break;
+			case LevelType.SNOW_NAME:
+				map.genMap(LevelType.DUNGEON_LEVEL, 100, 100, 15, seed);
+				break;
+			case LevelType.DUNGEON_NAME:
+				map.genMap(LevelType.FOREST_LEVEL, 100, 100, 15, seed);
+				break;
+			default:
+				map.genMap(LevelType.FOREST_LEVEL, 100, 100, 15, seed);
+				break;
+			}
+		}
 		entities.clear();
+		particles.killAllParticles();
 		entities.add(player);
 		player.updateAge();
 		player.getPosition().set(map.getPlayerSpawnLocation());
 		camera = new Camera(player.getPosition());
 		while(map.getEnemySpawnLocations().size()>0){
-			entities.add(new Slime(this, map.getNextEnemySpawnPosition()));				
+			entities.add(new Slime(this, map.getNextEnemySpawnPosition(), FloatColor.BROWN));				
 		}
 		entities.add(new ItemPickUp(this, new ArmClothing("leatherArms", this, -0.05f, -0.1f, 0.05f, 0, 0, 0),map.getNextPickupSpawnPosition()));
 		entities.add(new ItemPickUp(this, new ChestClothing("leatherChestPlate", this, -0.05f, -0.1f, 0, 0, 0.05f, 0),map.getNextPickupSpawnPosition()));
@@ -107,7 +135,7 @@ public class Level extends State {
 			tilesTextures.add(new TiledTexture(graphics, this, "leatherArms", ImageIO.read(Level.class.getResource("/leatherArms.png")), 12, 24));
 			tilesTextures.add(new TiledTexture(graphics, this, "leatherChestPlate", ImageIO.read(Level.class.getResource("/leatherChestPlate.png")), 12, 24));
 			tilesTextures.add(new TiledTexture(graphics, this, "leatherLegs", ImageIO.read(Level.class.getResource("/leatherLegs.png")), 12, 24));
-			tilesTextures.add(new TiledTexture(graphics, this, "map", ImageIO.read(Level.class.getResource("/grass.png")), 16, 32));
+			tilesTextures.add(new TiledTexture(graphics, this, "map", ImageIO.read(Level.class.getResource("/map.png")), 16, 32));
 			tilesTextures.add(new TiledTexture(graphics, this, "slime", ImageIO.read(Level.class.getResource("/slime.png")), 12, 12));
 			tilesTextures.add(new TiledTexture(graphics, this, "shadow", ImageIO.read(Level.class.getResource("/shadow.png")), 16, 16));
 			tilesTextures.add(new TiledTexture(graphics, this, "sword", ImageIO.read(Level.class.getResource("/sword.png")), 12, 12));
