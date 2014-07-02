@@ -17,7 +17,7 @@ public class Fire extends Entity {
 	public Fire(Level level, Vector3 position){
 		super("fire", Entity.FRIENDLY_TYPE, position.getX(), position.getY(), position.getZ(), 0.75f, 0.4f, 1, true);
 		flicker = new Animation(level.getTiledTexture("fire"));
-		flicker.addAnimationTimer(new AnimationTimer(0, 3, 6, true), true);
+		flicker.addAnimationTimer(new AnimationTimer(0, 1, 6, true), true);
 		smokeDelay = 0;
 	}
 

@@ -54,6 +54,7 @@ public class Level extends State {
 	
 	//pixel size of the in game units
 	private float unitResolution;
+	private static final float BASE_UNITRESOLUTION = 96;
 	
 	private int shadowBuffer;
 	private int shadow;
@@ -64,7 +65,7 @@ public class Level extends State {
 		uiObjects = new ArrayList<LevelUIObject>();
 		deltaTime = 0.0f;
 		timeSpeed =1.0f;
-		unitResolution = 92.0f; // set to 92
+		unitResolution = BASE_UNITRESOLUTION; // set to 92
 		tilesTextures = new ArrayList<TiledTexture>();
 		loadTextures(graphics);
 		shadowBuffer = graphics.addTexture(graphics.getResolution().x, graphics.getResolution().y*2, this);
@@ -106,11 +107,11 @@ public class Level extends State {
 			tilesTextures.add(new TiledTexture(graphics, this, "leatherArms", ImageIO.read(Level.class.getResource("/leatherArms.png")), 12, 24));
 			tilesTextures.add(new TiledTexture(graphics, this, "leatherChestPlate", ImageIO.read(Level.class.getResource("/leatherChestPlate.png")), 12, 24));
 			tilesTextures.add(new TiledTexture(graphics, this, "leatherLegs", ImageIO.read(Level.class.getResource("/leatherLegs.png")), 12, 24));
-			tilesTextures.add(new TiledTexture(graphics, this, "map", ImageIO.read(Level.class.getResource("/grass.png")), 12, 24));
+			tilesTextures.add(new TiledTexture(graphics, this, "map", ImageIO.read(Level.class.getResource("/grass.png")), 16, 32));
 			tilesTextures.add(new TiledTexture(graphics, this, "slime", ImageIO.read(Level.class.getResource("/slime.png")), 12, 12));
-			tilesTextures.add(new TiledTexture(graphics, this, "shadow", ImageIO.read(Level.class.getResource("/shadow.png")), 12, 12));
+			tilesTextures.add(new TiledTexture(graphics, this, "shadow", ImageIO.read(Level.class.getResource("/shadow.png")), 16, 16));
 			tilesTextures.add(new TiledTexture(graphics, this, "sword", ImageIO.read(Level.class.getResource("/sword.png")), 12, 12));
-			tilesTextures.add(new TiledTexture(graphics, this, "fire", ImageIO.read(Level.class.getResource("/fire.png")), 12, 12));
+			tilesTextures.add(new TiledTexture(graphics, this, "fire", ImageIO.read(Level.class.getResource("/fire.png")), 16, 16));
 		} catch (IOException e) {e.printStackTrace();}
 	}
 
@@ -123,7 +124,7 @@ public class Level extends State {
 			unitResolution+=deltaTime * 20;
 		}
 		if(game.getControls().isKeyTyped(Keyboard.KEY_BACK) || game.getControls().getController().isButtonPressed(6)){
-			unitResolution = 92;
+			unitResolution = BASE_UNITRESOLUTION;
 		}
 		if(game.getControls().isKeyTyped(Keyboard.KEY_ESCAPE) || game.getControls().getController().isButtonPressed(3)){
 			markForRemoval();
@@ -141,7 +142,7 @@ public class Level extends State {
 		camera.update(this);
 		//remove any objects that are marked for removal during this frame
 		removeMarkedObjects();
-		if(player.getPosition().distanceTo(map.getLevelExitLocation()) < 2){
+		if(player.getPosition().distanceTo(map.getLevelExitLocation()) < 1){
 			loadLevel((long)(Math.random()*(Long.MAX_VALUE-1)));
 		}
 	}

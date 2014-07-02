@@ -14,7 +14,7 @@ import com.alycarter.dragonOfAging.game.math.Vector3;
 public class Map {
 
 	private final float DEFAULT_HEIGHT = 0.5f;
-	private final float NOISE = (1.0f/12.0f);
+	private final float NOISE = (1.0f/8.0f);
 	
 	private final static Point UP = new Point(0, -1);
 	private final static Point DOWN = new Point(0, 1);
@@ -153,7 +153,7 @@ public class Map {
 						graphics.drawRectangle(xPos, yPos, y+0.01f, 1, 1, 0);
 						GL11.glMatrixMode(GL11.GL_TEXTURE);
 						GL11.glTranslatef(0, 1.0f, 0);
-						GL11.glScalef(1, 1.0f/(tilesHigh*16), 1);
+						GL11.glScalef(1, 1.0f/(tilesHigh*192), 1);
 						GL11.glMatrixMode(GL11.GL_MODELVIEW);
 						graphics.drawRectangle(xPos, yPos+1, y+0.01f, 1, 1, 0);
 						GL11.glMatrixMode(GL11.GL_TEXTURE);
