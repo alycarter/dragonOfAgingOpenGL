@@ -10,21 +10,11 @@ import org.lwjgl.opengl.GL11;
 
 import com.alycarter.dragonOfAging.game.Game;
 import com.alycarter.dragonOfAging.game.controls.Controls;
-import com.alycarter.dragonOfAging.game.graphics.FloatColor;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
 import com.alycarter.dragonOfAging.game.object.state.State;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.Entity;
-import com.alycarter.dragonOfAging.game.object.state.level.entity.Fire;
-import com.alycarter.dragonOfAging.game.object.state.level.entity.ItemPickUp;
-import com.alycarter.dragonOfAging.game.object.state.level.entity.Slime;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.Player;
-import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.ArmClothing;
-import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.ChestClothing;
-import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.LegClothing;
-import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.weapons.sword.LongSword;
-import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.weapons.sword.Spear;
-import com.alycarter.dragonOfAging.game.object.state.level.entity.player.items.weapons.sword.Zweihander;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.Particle;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.ParticleSystem;
 import com.alycarter.dragonOfAging.game.object.state.level.uiObjects.LevelUIObject;
@@ -55,7 +45,7 @@ public class Level extends State {
 	
 	//pixel size of the in game units
 	private float unitResolution;
-	private static final float BASE_UNITRESOLUTION = 96;
+	private static final float BASE_UNITRESOLUTION = 96;//96
 	
 	private int shadowBuffer;
 	private int shadow;
@@ -111,19 +101,19 @@ public class Level extends State {
 		player.updateAge();
 		player.getPosition().set(map.getPlayerSpawnLocation());
 		camera = new Camera(player.getPosition());
-		while(map.getEnemySpawnLocations().size()>0){
-			entities.add(new Slime(this, map.getNextEnemySpawnPosition(), FloatColor.BROWN));				
-		}
-		entities.add(new ItemPickUp(this, new ArmClothing("leatherArms", this, -0.05f, -0.1f, 0.05f, 0, 0, 0),map.getNextPickupSpawnPosition()));
-		entities.add(new ItemPickUp(this, new ChestClothing("leatherChestPlate", this, -0.05f, -0.1f, 0, 0, 0.05f, 0),map.getNextPickupSpawnPosition()));
-		entities.add(new ItemPickUp(this, new LegClothing("leatherLegs", this, -0.05f, -0.1f, 0, 0.05f, 0, 0), map.getNextPickupSpawnPosition()));
-		entities.add(new ItemPickUp(this, new ArmClothing("ironArms", this, -0.1f, -0.2f, 0.1f, 0, 0, 0), map.getNextPickupSpawnPosition()));
-		entities.add(new ItemPickUp(this, new ChestClothing("ironChestPlate", this, -0.1f, -0.2f, 0, 0, 0.1f, 0), map.getNextPickupSpawnPosition()));
-		entities.add(new ItemPickUp(this, new LegClothing("ironLegs", this, -0.1f, -0.2f, 0, 0.1f, 0, 0), map.getNextPickupSpawnPosition()));
-		entities.add(new ItemPickUp(this, new LongSword(this), map.getNextPickupSpawnPosition()));
-		entities.add(new ItemPickUp(this, new Spear(this), map.getNextPickupSpawnPosition()));
-		entities.add(new ItemPickUp(this, new Zweihander(this), map.getNextPickupSpawnPosition()));	
-		entities.add(new Fire(this, map.getLevelExitLocation()));	
+//		while(map.getEnemySpawnLocations().size()>0){
+//			entities.add(new Slime(this, map.getNextEnemySpawnPosition(), FloatColor.BROWN));				
+//		}
+//		entities.add(new ItemPickUp(this, new ArmClothing("leatherArms", this, -0.05f, -0.1f, 0.05f, 0, 0, 0),map.getNextPickupSpawnPosition()));
+//		entities.add(new ItemPickUp(this, new ChestClothing("leatherChestPlate", this, -0.05f, -0.1f, 0, 0, 0.05f, 0),map.getNextPickupSpawnPosition()));
+//		entities.add(new ItemPickUp(this, new LegClothing("leatherLegs", this, -0.05f, -0.1f, 0, 0.05f, 0, 0), map.getNextPickupSpawnPosition()));
+//		entities.add(new ItemPickUp(this, new ArmClothing("ironArms", this, -0.1f, -0.2f, 0.1f, 0, 0, 0), map.getNextPickupSpawnPosition()));
+//		entities.add(new ItemPickUp(this, new ChestClothing("ironChestPlate", this, -0.1f, -0.2f, 0, 0, 0.1f, 0), map.getNextPickupSpawnPosition()));
+//		entities.add(new ItemPickUp(this, new LegClothing("ironLegs", this, -0.1f, -0.2f, 0, 0.1f, 0, 0), map.getNextPickupSpawnPosition()));
+//		entities.add(new ItemPickUp(this, new LongSword(this), map.getNextPickupSpawnPosition()));
+//		entities.add(new ItemPickUp(this, new Spear(this), map.getNextPickupSpawnPosition()));
+//		entities.add(new ItemPickUp(this, new Sheild(this), map.getNextPickupSpawnPosition()));	
+//		entities.add(new Fire(this, map.getLevelExitLocation()));	
 	}
 	
 	private void loadTextures(Graphics graphics){

@@ -21,8 +21,10 @@ public class Map {
 	private final static Point LEFT = new Point(-1, 0);
 	private final static Point RIGHT = new Point(1, 0);
 	
+	private final static int NUM_ROOMS = 8;
+	
 	private Point size;
-	private float heightMap[];
+	private Tile map[];
 	private TiledTexture mapTexture;
 	private int shadow;
 	private long seed = 0;
@@ -37,12 +39,24 @@ public class Map {
 	
 	private LevelType levelType;
 	
+	private ArrayList<Room> roomLayouts;
+	
 	public Map(Level level, int shadow) {
 		mapTexture = level.getTiledTexture("map");
 		this.shadow = shadow;
 		enemySpawnLocations = new ArrayList<Vector3>();
 		pickupSpawnLocations = new ArrayList<Vector3>();
 		inisialised = false;
+		roomLayouts = new ArrayList<Room>();
+		loadMapLayouts();
+	}
+	
+	private void loadMapLayouts(){
+		for(int i =0 ; i < NUM_ROOMS; i++){
+			Room room = new Room();
+			room.loadRoom("/maps/"+i+".map");
+			roomLayouts.add(room);
+		}
 	}
 	
 	public void genMap(LevelType levelType, int width, int height, int rooms, long seed){
@@ -52,25 +66,19 @@ public class Map {
 		this.seed = seed;
 		Random random = new Random(seed);
 		size = new Point(width, height);
-		heightMap = new float[width*height];
+		map = new Tile[width * height];
 		for(int i = 0; i < width*height; i++){
-			heightMap[i] = DEFAULT_HEIGHT+Math.round(random.nextFloat())*NOISE; 
+			map[i]= new Tile(0,0,levelType.getTextureOffset(), 0, 0);
+			map[i].setHeight(DEFAULT_HEIGHT+Math.round(random.nextFloat())*NOISE);
 		}
 		ArrayList<Node> openNodes = new ArrayList<Node>();
-		openNodes.add(new Node(new Point(width/2, height/2), UP));
-		for(int i = 0; i<rooms && openNodes.size()>0; i++){
-			Vector3 center = genCircle(openNodes, (int)(random.nextFloat()*openNodes.size()), (int)(random.nextFloat()*7)+5, random);
-			if (i==0) {
-				playerSpawnLocation = center;
-			}else{
-				if(i == rooms-1 || openNodes.size() == 0){
-					levelExitLocation = center;
-				}else{
-					enemySpawnLocations.add(center);
-					pickupSpawnLocations.add(center);
-				}
-			}
+		openNodes.add(new Node(new Point(width/2, height/2), RIGHT));
+		genRoom(openNodes, random, roomLayouts.get(1));
+		for(int i =0 ; i <15; i++){
+			genRoom(openNodes, random, roomLayouts.get((int)(random.nextFloat()*roomLayouts.size())));
 		}
+		playerSpawnLocation = new Vector3(width/2, height/2, getHeight(width/2, height/2));
+		levelExitLocation = new Vector3(0, 0, 0);
 		inisialised = true;
 	}
 	
@@ -78,45 +86,96 @@ public class Map {
 		return seed;
 	}
 	
-	private Vector3 genCircle(ArrayList<Node> nodes, int nodeToUse, int diameter, Random random){
-		Node node = nodes.remove(nodeToUse);
-		int radius = diameter/2;
-		Point center = new Point(node.location.x+(node.direction.x * radius), node.location.y+(node.direction.y * radius));
-		int endX = center.x+radius;
-		int endY = center.y+radius;
-		for(int y = center.y-radius; y <= endY; y++){
-			for(int x = center.x-radius; x <= endX; x++){
-				if(center.distance(x, y) <= radius){
-					setHeight(x, y, Math.round(random.nextFloat())*NOISE);
-				}
-			}
+	private void genRoom(ArrayList<Node> nodes, Random random, Room room){
+		Node node = getClearNode(nodes, room, random);
+		Point offSet = calculateRoomOffSet(node, room);
+		for(int i = 0; i < room.getTiles().size(); i++ ){	
+			Tile roomTile = room.getTiles().get(i);
+			setTile(roomTile.getPosition().x + offSet.x, roomTile.getPosition().y + offSet.y, roomTile);
 		}
-		if(node.direction.x == 0){
-			nodes.add(new Node(new Point(center.x-radius, center.y), LEFT));
-			nodes.add(new Node(new Point(center.x+radius, center.y), RIGHT));
+		if(node.direction.x == 0){ //if its up or down
+			nodes.add(new Node(new Point(node.location.x + (room.getSize().x/2), node.location.y + (int)Math.ceil(room.getSize().y / 2.0f * node.direction.y)), RIGHT));
+			nodes.add(new Node(new Point(node.location.x - (room.getSize().x/2)-(room.getSize().x%2), node.location.y + (int)Math.ceil(room.getSize().y / 2.0f * node.direction.y)), LEFT));
 		}
-		if(node.direction.y == 0){
-			nodes.add(new Node(new Point(center.x, center.y-radius), UP));
-			nodes.add(new Node(new Point(center.x, center.y+radius), DOWN));
+		if(node.direction.y == 0){ //if its left or right
+			nodes.add(new Node(new Point(node.location.x + (int)Math.ceil(room.getSize().x / 2.0f * node.direction.x),node.location.y + (room.getSize().y/2)) , DOWN));
+			nodes.add(new Node(new Point(node.location.x + (int)Math.ceil(room.getSize().x / 2.0f * node.direction.x),node.location.y - (room.getSize().y/2)-(room.getSize().y%2)), UP));
 		}
-		node.location.x+=diameter*node.direction.x;
-		node.location.y+=diameter*node.direction.y;
-		nodes.add(node);
-		Vector3 middle = new Vector3(center.x+0.5f, center.y+0.5f, getHeight(center.x, center.y));
-		return middle;
+		node.location.x+= room.getSize().x * node.direction.x;
+		node.location.y+= room.getSize().y * node.direction.y;
 	}
 	
-	private void setHeight(int x, int y, float z){
-		if(x >= 0 && x < size.getX() && y >= 0 && y < size.getY()){
-			heightMap[(y * size.y) + x] = z ;
+	public Node getClearNode(ArrayList<Node> nodes, Room room, Random random){
+		ArrayList<Node> ingoreNodes = new ArrayList<Node>();
+		Node node = nodes.get((int) (random.nextFloat()*nodes.size()));
+		Point offSet = calculateRoomOffSet(node, room);
+		while(!isRoomClear(room, offSet)){
+			ingoreNodes.add(node);
+			nodes.remove(node);
+			node = nodes.get((int) (random.nextFloat()*nodes.size()));
+			offSet = calculateRoomOffSet(node, room);
 		}
+		nodes.addAll(ingoreNodes);
+		return node;
+	}
+	
+	public boolean isRoomClear(Room room, Point offSet){
+		for(int i = 0; i < room.getTiles().size(); i++){
+			Point tilePos = new Point(offSet);
+			tilePos.x += room.getTiles().get(i).getPosition().x;
+			tilePos.y += room.getTiles().get(i).getPosition().y;			
+			if(getTile(tilePos.x, tilePos.y) == null || getTile(tilePos.x, tilePos.y).isEdited()){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public Point calculateRoomOffSet(Node node, Room room){
+		Point offSet = new Point(node.location);
+		offSet.x += ((node.direction.getX() - 1.0f) / 2.0f * room.getSize().getX());
+		offSet.y += ((node.direction.getY() - 1.0f) / 2.0f * room.getSize().getY());
+		return offSet;
 	}
 	
 	public float getHeight(int x, int y){
 		if(x >= 0 && x < size.getX() && y >= 0 && y < size.getY()){
-			return heightMap[(y*size.y) + x];
+			return map[(y*size.y) + x].getCollisionHeight();
 		}else{
 			return 1.0f;
+		}
+	}
+	
+	private int getTileTexture(int x, int y){
+		if(x >= 0 && x < size.getX() && y >= 0 && y < size.getY()){
+			return map[(y*size.y) + x].getTexture();
+		}else{
+			return levelType.getTextureOffset();
+		}
+	}
+	
+	private Tile getTile(int x, int y){
+		if(x >= 0 && x < size.getX() && y >= 0 && y < size.getY()){
+			return map[(y*size.y) + x];
+		}else{
+			return null;
+		}
+	} 
+	
+	private void setTile(int x, int y, Tile template){
+		Tile mapTile = getTile(x, y);
+		if(template.getEditedHeight()){
+			float noise = 0;
+			if(template.isUsingNoise()){
+				noise+=NOISE;
+			}
+			mapTile.setCollisionHeight(template.getCollisionHeight()+noise);
+			mapTile.setRenderHeight(template.getRenderHeight()+noise);
+			mapTile.setEditedHeight(true);
+		}
+		if (template.getEditedTexture()) {			
+			mapTile.setTexture(template.getTexture());
+			mapTile.setEditedTexture(true);
 		}
 	}
 	
@@ -126,7 +185,6 @@ public class Map {
 	}
 	
 	private void renderTexture(Graphics graphics, float left, float right, float top, float bottom){
-		graphics.bindTexture(mapTexture.getTileTextureID(levelType.getTextureOffset()));
 		for(int y =(int)Math.ceil(bottom); y > Math.floor(top)-1; y--){	
 			for(int x = (int) Math.floor(left); x < Math.ceil(right); x++){
 				float height = getHeight(x, y);
@@ -134,10 +192,9 @@ public class Map {
 				FloatColor color = new FloatColor(value, value, value, 1.0f);
 				float xPos = x + 0.5f;
 				float yPos = y + 0.5f - height;
-				graphics.drawRectangle(color, xPos, yPos+0.5f, y, 1, 2, 0);
+				graphics.drawImage(mapTexture.getTileTextureID(getTileTexture(x, y)),color, xPos, yPos+0.5f, y, 1, 2, 0);
 			}	
 		}
-		graphics.unBindTexture();
 	}
 	
 	private void renderShadows(Graphics graphics, float left, float right, float top, float bottom){
