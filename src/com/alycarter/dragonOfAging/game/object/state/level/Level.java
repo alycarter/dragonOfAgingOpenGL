@@ -7,7 +7,6 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 import com.alycarter.dragonOfAging.game.Game;
 import com.alycarter.dragonOfAging.game.controls.Controls;
@@ -20,7 +19,6 @@ import com.alycarter.dragonOfAging.game.object.state.level.entity.ItemPickUp;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.Slime;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.Player;
 import com.alycarter.dragonOfAging.game.object.state.level.map.Map;
-import com.alycarter.dragonOfAging.game.object.state.level.particle.Particle;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.ParticleSystem;
 import com.alycarter.dragonOfAging.game.object.state.level.uiObjects.LevelUIObject;
 
@@ -54,12 +52,7 @@ public class Level extends State {
 	//time multiplier
 	private float timeSpeed;
 	
-	//pixel size of the in game units
-	private float unitResolution;
-	private static final float BASE_UNITRESOLUTION = 96;//96
-	
-	private int shadowBuffer;
-	private int shadow;
+	private LevelRenderer levelRenderer;
 	
 	public Level(String name, Graphics graphics) {
 		super(name);
@@ -67,12 +60,10 @@ public class Level extends State {
 		uiObjects = new ArrayList<LevelUIObject>();
 		deltaTime = 0.0f;
 		timeSpeed =1.0f;
-		unitResolution = BASE_UNITRESOLUTION; // set to 92
 		tilesTextures = new ArrayList<TiledTexture>();
 		loadTextures(graphics);
-		shadowBuffer = graphics.addTexture(graphics.getResolution().x, graphics.getResolution().y*2, this);
-		shadow = getTiledTexture("shadow").getTileTextureID(0);
-		map =new Map(this, shadowBuffer);
+		levelRenderer = new LevelRenderer(this, graphics);
+		map =new Map(this);
 		player = new Player(this,0, 0);
 		particles = new ParticleSystem(2000);
 		itemPool = new ItemPool(this);
@@ -143,13 +134,13 @@ public class Level extends State {
 	@Override
 	public void update(Game game) {
 		if(game.getControls().isKeyHeld(Keyboard.KEY_EQUALS) || game.getControls().getController().isButtonPressed(4)){
-			unitResolution-=deltaTime * 20;
+			levelRenderer.setUnitResolution(levelRenderer.getUnitResolution()+(deltaTime * 20));
 		}
 		if(game.getControls().isKeyHeld(Keyboard.KEY_MINUS) || game.getControls().getController().isButtonPressed(5)){
-			unitResolution+=deltaTime * 20;
+			levelRenderer.setUnitResolution(levelRenderer.getUnitResolution()-(deltaTime * 20));
 		}
 		if(game.getControls().isKeyTyped(Keyboard.KEY_BACK) || game.getControls().getController().isButtonPressed(6)){
-			unitResolution = BASE_UNITRESOLUTION;
+			levelRenderer.setUnitResolution(LevelRenderer.BASE_UNITRESOLUTION);
 		}
 		if(game.getControls().isKeyTyped(Keyboard.KEY_ESCAPE) || game.getControls().getController().isButtonPressed(3)){
 			markForRemoval();
@@ -198,84 +189,8 @@ public class Level extends State {
 
 	@Override
 	public void render(Graphics graphics) {
-		//corner locations in game
-		float left = camera.getPosition().getX() - (float)(graphics.getResolution().getX()/2/unitResolution); 
-		float right = camera.getPosition().getX() + (float)(graphics.getResolution().getX()/2/unitResolution); 
-		float top = camera.getPosition().getY() - (float)(graphics.getResolution().getY()/2/unitResolution); 
-		float bottom = camera.getPosition().getY() + (float)(graphics.getResolution().getY()/2/unitResolution); 
-		
-		//start world drawing
-		graphics.enableWorldCamera(camera.getPosition().getX(), camera.getPosition().getY(), unitResolution);
-		//draw entities
-		for(int i = 0;i < entities.size(); i++){
-			if(entities.get(i).isOnScreen(top, bottom, left, right)){
-				entities.get(i).render(graphics);				
-			}
-		}
-		//draw particles
-		particles.render(graphics, top, bottom, left, right);
-		//draw shadows to texture
-		drawShadows(graphics,top,bottom,left,right);
-		//draw the map
-		map.render(graphics, left, right, top, bottom);
-		//end world drawing
-		graphics.disableWorldCamera();
-		//render ui objects here
+		levelRenderer.render(graphics);
 	}
-	
-	private void drawShadows(Graphics graphics, float top, float bottom, float left, float right){
-		graphics.bindToFrameBuffer(shadowBuffer);
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-		//draw shadows
-		graphics.bindTexture(shadow);
-		//scale the world to fit the shadow texture
-		GL11.glViewport(0, 0, graphics.getResolution().x, graphics.getResolution().y*2);
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glPushMatrix();
-		GL11.glTranslatef(0, top/2, 0);
-		GL11.glScalef(1.0f, 0.5f, 1.0f);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		bottom += bottom-top;
-		//draw all the entity shadows
-		for(int i = 0;i < entities.size(); i++){
-			Entity e = entities.get(i); 
-			if(e.isOnScreen(top, bottom, left, right)){
-				float y = e.getPosition().getY();
-				graphics.drawRectangle(e.getPosition().getX(), y, 0,
-						e.getBoundingBox().getX(), e.getBoundingBox().getY(), 0);
-			}
-		}
-		//draw all the particle shadows
-		ArrayList<Particle> particleList = particles.getActiveParticles();
-		for(int i = 0;i < particleList.size(); i++){
-			if(particleList.get(i).isOnScreen(top, bottom, left, right)){
-				float y = particleList.get(i).getPosition().getY();
-				graphics.drawRectangle(particleList.get(i).getPosition().getX(), y, 0,
-					particleList.get(i).getSize(), particleList.get(i).getSize()/2.0f, 0);
-			}
-		}
-		//move back to the normal view port
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glPopMatrix();
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		GL11.glViewport(0, 0, graphics.getResolution().x, graphics.getResolution().y);
-		//deselect the shadow texture
-		graphics.unBindTexture();
-		//switch back to window buffer
-		graphics.unbindFromFrameBuffer();
-	}
-	
-	/*private void sortEntities(){
-		for(int i =1; i < entities.size(); i++){
-			int j = i;
-			while( j > 0 && entities.get(j).getPosition().getY() < entities.get(j-1).getPosition().getY()){
-				Entity temp = entities.get(j);
-				entities.set(j, entities.get(j-1));
-				entities.set(j-1, temp);
-				j--;
-			}
-		}
-	}*/
 	
 	public ArrayList<Entity> getEntities(){
 		return entities;
@@ -312,5 +227,9 @@ public class Level extends State {
 	
 	public Player getPlayer(){
 		return player;
+	}
+	
+	public Camera getCamera(){
+		return camera;
 	}
 }
