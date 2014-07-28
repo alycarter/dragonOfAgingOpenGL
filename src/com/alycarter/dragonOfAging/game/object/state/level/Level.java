@@ -2,6 +2,7 @@ package com.alycarter.dragonOfAging.game.object.state.level;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -14,7 +15,11 @@ import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
 import com.alycarter.dragonOfAging.game.object.state.State;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.Entity;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.Fire;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.ItemPickUp;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.Slime;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.player.Player;
+import com.alycarter.dragonOfAging.game.object.state.level.map.Map;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.Particle;
 import com.alycarter.dragonOfAging.game.object.state.level.particle.ParticleSystem;
 import com.alycarter.dragonOfAging.game.object.state.level.uiObjects.LevelUIObject;
@@ -25,6 +30,8 @@ public class Level extends State {
 	private ArrayList<Entity> entities;
 	private ArrayList<LevelUIObject> uiObjects;
 	private Player player;
+	
+	private ItemPool itemPool;
 	
 	//particles
 	private ParticleSystem particles;
@@ -37,6 +44,10 @@ public class Level extends State {
 	
 	//level tile map
 	private Map map;
+	
+	private static final int MAP_DEFAULT_WIDTH = 400;
+	private static final int MAP_DEFAULT_HEIGHT = 400;
+	private static final int MAP_DEFAULT_ROOMS = 30;	
 
 	//amount of time the last frame took
 	private float deltaTime;
@@ -64,34 +75,36 @@ public class Level extends State {
 		map =new Map(this, shadowBuffer);
 		player = new Player(this,0, 0);
 		particles = new ParticleSystem(2000);
+		itemPool = new ItemPool(this);
 		loadLevel((long)(Math.random()*(Long.MAX_VALUE-1)));
 	}
 	
 	private void loadLevel(long seed){
+		Random random = new Random(seed);
 		if(!map.isInisialised()){
-			map.genMap(LevelType.FOREST_LEVEL,100, 100, 15, seed);
+			map.genMap(LevelType.FOREST_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
 		}else{
 			switch (map.getLevelType().getLevelName()){
 			case LevelType.FOREST_NAME:
-				map.genMap(LevelType.LAVA_LEVEL, 100, 100, 15, seed);
+				map.genMap(LevelType.LAVA_LEVEL,MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
 				break;
 			case LevelType.LAVA_NAME:
-				map.genMap(LevelType.CAVE_LEVEL, 100, 100, 15, seed);
+				map.genMap(LevelType.CAVE_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
 				break;
 			case LevelType.CAVE_NAME:
-				map.genMap(LevelType.DESERT_LEVEL, 100, 100, 15, seed);
+				map.genMap(LevelType.DESERT_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
 				break;
 			case LevelType.DESERT_NAME:
-				map.genMap(LevelType.SNOW_LEVEL, 100, 100, 15, seed);
+				map.genMap(LevelType.SNOW_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
 				break;
 			case LevelType.SNOW_NAME:
-				map.genMap(LevelType.DUNGEON_LEVEL, 100, 100, 15, seed);
+				map.genMap(LevelType.DUNGEON_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
 				break;
 			case LevelType.DUNGEON_NAME:
-				map.genMap(LevelType.FOREST_LEVEL, 100, 100, 15, seed);
+				map.genMap(LevelType.FOREST_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
 				break;
 			default:
-				map.genMap(LevelType.FOREST_LEVEL, 100, 100, 15, seed);
+				map.genMap(LevelType.FOREST_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
 				break;
 			}
 		}
@@ -101,19 +114,13 @@ public class Level extends State {
 		player.updateAge();
 		player.getPosition().set(map.getPlayerSpawnLocation());
 		camera = new Camera(player.getPosition());
-//		while(map.getEnemySpawnLocations().size()>0){
-//			entities.add(new Slime(this, map.getNextEnemySpawnPosition(), FloatColor.BROWN));				
-//		}
-//		entities.add(new ItemPickUp(this, new ArmClothing("leatherArms", this, -0.05f, -0.1f, 0.05f, 0, 0, 0),map.getNextPickupSpawnPosition()));
-//		entities.add(new ItemPickUp(this, new ChestClothing("leatherChestPlate", this, -0.05f, -0.1f, 0, 0, 0.05f, 0),map.getNextPickupSpawnPosition()));
-//		entities.add(new ItemPickUp(this, new LegClothing("leatherLegs", this, -0.05f, -0.1f, 0, 0.05f, 0, 0), map.getNextPickupSpawnPosition()));
-//		entities.add(new ItemPickUp(this, new ArmClothing("ironArms", this, -0.1f, -0.2f, 0.1f, 0, 0, 0), map.getNextPickupSpawnPosition()));
-//		entities.add(new ItemPickUp(this, new ChestClothing("ironChestPlate", this, -0.1f, -0.2f, 0, 0, 0.1f, 0), map.getNextPickupSpawnPosition()));
-//		entities.add(new ItemPickUp(this, new LegClothing("ironLegs", this, -0.1f, -0.2f, 0, 0.1f, 0, 0), map.getNextPickupSpawnPosition()));
-//		entities.add(new ItemPickUp(this, new LongSword(this), map.getNextPickupSpawnPosition()));
-//		entities.add(new ItemPickUp(this, new Spear(this), map.getNextPickupSpawnPosition()));
-//		entities.add(new ItemPickUp(this, new Sheild(this), map.getNextPickupSpawnPosition()));	
-//		entities.add(new Fire(this, map.getLevelExitLocation()));	
+		while(map.getEnemySpawnLocations().size()>0){
+			entities.add(new Slime(this, map.getNextEnemySpawnPosition(random)));				
+		}
+		while(map.getPickupSpawnLocations().size()>0){
+			entities.add(new ItemPickUp(this, itemPool.getRandomItem(this,random), map.getNextPickupSpawnPosition(random)));
+		}
+		entities.add(new Fire(this, map.getLevelExitLocation()));	
 	}
 	
 	private void loadTextures(Graphics graphics){
@@ -214,9 +221,6 @@ public class Level extends State {
 		//end world drawing
 		graphics.disableWorldCamera();
 		//render ui objects here
-		
-		//debug draw shadow buffer texture
-		//graphics.drawImage(shadowBuffer, 400, 300, -900, 800, -600, 0);
 	}
 	
 	private void drawShadows(Graphics graphics, float top, float bottom, float left, float right){

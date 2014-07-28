@@ -1,4 +1,4 @@
-package com.alycarter.dragonOfAging.game.object.state.level;
+package com.alycarter.dragonOfAging.game.object.state.level.map;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -10,6 +10,8 @@ import com.alycarter.dragonOfAging.game.graphics.FloatColor;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
 import com.alycarter.dragonOfAging.game.math.Vector3;
+import com.alycarter.dragonOfAging.game.object.state.level.Level;
+import com.alycarter.dragonOfAging.game.object.state.level.LevelType;
 
 public class Map {
 
@@ -21,77 +23,69 @@ public class Map {
 	private final static Point LEFT = new Point(-1, 0);
 	private final static Point RIGHT = new Point(1, 0);
 	
-	private final static int NUM_ROOMS = 8;
-	
 	private Point size;
 	private Tile map[];
 	private TiledTexture mapTexture;
 	private int shadow;
-	private long seed = 0;
 	
-	private ArrayList<Vector3> enemySpawnLocations;
-	private ArrayList<Vector3> pickupSpawnLocations;
+	private ArrayList<Point> enemySpawnLocations;
+	private ArrayList<Point> itemSpawnLocations;
 	
-	private Vector3 playerSpawnLocation;
-	private Vector3 levelExitLocation;
+	private ArrayList<Point> playerSpawnLocations;
+	private ArrayList<Point> levelExitLocations;
 	
 	private boolean inisialised;
 	
 	private LevelType levelType;
-	
-	private ArrayList<Room> roomLayouts;
+
+	private RoomManager roomManager;
 	
 	public Map(Level level, int shadow) {
 		mapTexture = level.getTiledTexture("map");
 		this.shadow = shadow;
-		enemySpawnLocations = new ArrayList<Vector3>();
-		pickupSpawnLocations = new ArrayList<Vector3>();
+		enemySpawnLocations = new ArrayList<Point>();
+		itemSpawnLocations = new ArrayList<Point>();
+		playerSpawnLocations = new ArrayList<Point>();
+		levelExitLocations = new ArrayList<Point>();
 		inisialised = false;
-		roomLayouts = new ArrayList<Room>();
-		loadMapLayouts();
+		roomManager = new RoomManager();
+		roomManager.loadRoomLayouts();
 	}
 	
-	private void loadMapLayouts(){
-		for(int i =0 ; i < NUM_ROOMS; i++){
-			Room room = new Room();
-			room.loadRoom("/maps/"+i+".map");
-			roomLayouts.add(room);
-		}
-	}
-	
-	public void genMap(LevelType levelType, int width, int height, int rooms, long seed){
+	public void genMap(LevelType levelType, int width, int height, int rooms, Random random){
 		this.levelType = levelType;
-		enemySpawnLocations.clear();
-		pickupSpawnLocations.clear();
-		this.seed = seed;
-		Random random = new Random(seed);
+		clearLocations();
 		size = new Point(width, height);
-		map = new Tile[width * height];
-		for(int i = 0; i < width*height; i++){
-			map[i]= new Tile(0,0,levelType.getTextureOffset(), 0, 0);
-			map[i].setHeight(DEFAULT_HEIGHT+Math.round(random.nextFloat())*NOISE);
-		}
+		resetMapTiles(random);
 		ArrayList<Node> openNodes = new ArrayList<Node>();
 		openNodes.add(new Node(new Point(width/2, height/2), RIGHT));
-		genRoom(openNodes, random, roomLayouts.get(1));
-		for(int i =0 ; i <15; i++){
-			genRoom(openNodes, random, roomLayouts.get((int)(random.nextFloat()*roomLayouts.size())));
+		for(int i =0 ; i <rooms; i++){
+			genRoom(openNodes, random, roomManager.getRoom(random));
 		}
-		playerSpawnLocation = new Vector3(width/2, height/2, getHeight(width/2, height/2));
-		levelExitLocation = new Vector3(0, 0, 0);
 		inisialised = true;
 	}
 	
-	public long getCurrentSeed(){
-		return seed;
+	private void clearLocations(){
+		enemySpawnLocations.clear();
+		itemSpawnLocations.clear();
+		playerSpawnLocations.clear();
+		levelExitLocations.clear();
+	}
+	
+	private void resetMapTiles(Random random){
+		map = new Tile[size.x* size.y];
+		for(int i = 0; i < size.x*size.y; i++){
+			map[i]= new Tile(levelType.getTextureOffset(), 0, 0, false);
+			map[i].setHeight(DEFAULT_HEIGHT+Math.round(random.nextFloat())*NOISE);
+		}
 	}
 	
 	private void genRoom(ArrayList<Node> nodes, Random random, Room room){
 		Node node = getClearNode(nodes, room, random);
 		Point offSet = calculateRoomOffSet(node, room);
 		for(int i = 0; i < room.getTiles().size(); i++ ){	
-			Tile roomTile = room.getTiles().get(i);
-			setTile(roomTile.getPosition().x + offSet.x, roomTile.getPosition().y + offSet.y, roomTile);
+			TemplateTile roomTile = room.getTiles().get(i);
+			setTile(roomTile.getPosition().x + offSet.x, roomTile.getPosition().y + offSet.y, roomTile, random);
 		}
 		if(node.direction.x == 0){ //if its up or down
 			nodes.add(new Node(new Point(node.location.x + (room.getSize().x/2), node.location.y + (int)Math.ceil(room.getSize().y / 2.0f * node.direction.y)), RIGHT));
@@ -103,6 +97,34 @@ public class Map {
 		}
 		node.location.x+= room.getSize().x * node.direction.x;
 		node.location.y+= room.getSize().y * node.direction.y;
+		addRoomLocations(room, offSet);
+	}
+	
+	private void addRoomLocations(Room room, Point offSet){
+		for(int i = 0; i < room.getEnemySpawnPositions().size(); i++){
+			Point location = new Point(room.getEnemySpawnPositions().get(i));
+			location.x+=offSet.x;
+			location.y+=offSet.y;
+			enemySpawnLocations.add(location);
+		}
+		for(int i = 0; i < room.getItemSpawnPositions().size(); i++){
+			Point location = new Point(room.getItemSpawnPositions().get(i));
+			location.x+=offSet.x;
+			location.y+=offSet.y;
+			itemSpawnLocations.add(location);
+		}
+		for(int i = 0; i < room.getPlayerSpawnPositions().size(); i++){
+			Point location = new Point(room.getPlayerSpawnPositions().get(i));
+			location.x+=offSet.x;
+			location.y+=offSet.y;
+			playerSpawnLocations.add(location);
+		}
+		for(int i = 0; i < room.getLevelExitPositions().size(); i++){
+			Point location = new Point(room.getLevelExitPositions().get(i));
+			location.x+=offSet.x;
+			location.y+=offSet.y;
+			levelExitLocations.add(location);
+		}
 	}
 	
 	public Node getClearNode(ArrayList<Node> nodes, Room room, Random random){
@@ -124,7 +146,7 @@ public class Map {
 			Point tilePos = new Point(offSet);
 			tilePos.x += room.getTiles().get(i).getPosition().x;
 			tilePos.y += room.getTiles().get(i).getPosition().y;			
-			if(getTile(tilePos.x, tilePos.y) == null || getTile(tilePos.x, tilePos.y).isEdited()){
+			if(getTile(tilePos.x, tilePos.y) == null || getTile(tilePos.x, tilePos.y).isReserved()){
 				return false;
 			}
 		}
@@ -162,21 +184,20 @@ public class Map {
 		}
 	} 
 	
-	private void setTile(int x, int y, Tile template){
+	private void setTile(int x, int y, TemplateTile template, Random random){
 		Tile mapTile = getTile(x, y);
-		if(template.getEditedHeight()){
+		if(template.isEditedHeight()){
 			float noise = 0;
-			if(template.isUsingNoise()){
+			if(template.isUseNoise() && random.nextFloat()<0.5f){
 				noise+=NOISE;
 			}
 			mapTile.setCollisionHeight(template.getCollisionHeight()+noise);
 			mapTile.setRenderHeight(template.getRenderHeight()+noise);
-			mapTile.setEditedHeight(true);
 		}
-		if (template.getEditedTexture()) {			
+		if (template.isEditedTexture()) {			
 			mapTile.setTexture(template.getTexture());
-			mapTile.setEditedTexture(true);
 		}
+		mapTile.setReserved(template.isReserved());
 	}
 	
 	public void render(Graphics graphics, float left, float right, float top, float bottom){
@@ -244,33 +265,63 @@ public class Map {
 		}
 	}
 	
-	public ArrayList<Vector3> getEnemySpawnLocations(){
+	public ArrayList<Point> getEnemySpawnLocations(){
 		return enemySpawnLocations;
 	}
 	
-	public ArrayList<Vector3> getPickupSpawnLocations(){
-		return pickupSpawnLocations;
+	public ArrayList<Point> getPickupSpawnLocations(){
+		return itemSpawnLocations;
 	}
 	
 	public Vector3 getPlayerSpawnLocation(){
-		return playerSpawnLocation;
+		Vector3 center = new Vector3(size.x/2, size.y/2, getHeight(size.x/2, size.y/2)); 
+		if(playerSpawnLocations.size()==0){
+			return center;
+		}else{
+			Vector3 pos = null;
+			for(int i = 0; i < playerSpawnLocations.size(); i++){
+				Vector3 newPos = new Vector3(playerSpawnLocations.get(i).x+0.5f, playerSpawnLocations.get(i).y+0.5f, 
+						getHeight(playerSpawnLocations.get(i).x, playerSpawnLocations.get(i).y));
+				if(pos == null || newPos.distanceTo(center) < pos.distanceTo(center)){
+					pos = newPos;
+				}
+			}
+			return pos;
+		}
 	}
 	
 	public Vector3 getLevelExitLocation(){
-		return levelExitLocation;
+		if(levelExitLocations.size() > 0){
+			Vector3 player = getPlayerSpawnLocation();
+			Vector3 pos = null;
+			for(int i = 0; i < levelExitLocations.size(); i++){
+				Vector3 newPos = new Vector3(levelExitLocations.get(i).x+0.5f, levelExitLocations.get(i).y+0.5f, 
+						getHeight(levelExitLocations.get(i).x, levelExitLocations.get(i).y));
+				if(pos == null || newPos.distanceTo(player) > pos.distanceTo(player)){
+					pos = newPos;
+				}
+			}
+			return pos;
+		}else{
+			return new Vector3(0, 0, 1);
+		}
 	}
 	
-	public Vector3 getNextEnemySpawnPosition(){
+	public Vector3 getNextEnemySpawnPosition(Random random){
 		if(enemySpawnLocations.size() != 0){
-			return enemySpawnLocations.remove((int) (Math.random()*enemySpawnLocations.size()));
+			Point tile = enemySpawnLocations.remove((int) (random.nextFloat()*enemySpawnLocations.size()));
+			Vector3 location = new Vector3(tile.x+0.5f, tile.y+0.5f, getHeight(tile.x, tile.y));
+			return location;
 		}else{
 			return null;
 		}
 	}
 	
-	public Vector3 getNextPickupSpawnPosition(){
-		if(pickupSpawnLocations.size() != 0){
-			return pickupSpawnLocations.remove((int) (Math.random()*pickupSpawnLocations.size()));
+	public Vector3 getNextPickupSpawnPosition(Random random){
+		if(itemSpawnLocations.size() != 0){
+			Point tile = itemSpawnLocations.remove((int) (random.nextFloat()*itemSpawnLocations.size()));
+			Vector3 location = new Vector3(tile.x+0.5f, tile.y+0.5f, getHeight(tile.x, tile.y));
+			return location;
 		}else{
 			return null;
 		}

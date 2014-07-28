@@ -8,7 +8,7 @@ import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.Sprite;
 import com.alycarter.dragonOfAging.game.math.Vector3;
 import com.alycarter.dragonOfAging.game.object.state.level.Level;
-import com.alycarter.dragonOfAging.game.object.state.level.Map;
+import com.alycarter.dragonOfAging.game.object.state.level.map.Map;
 
 public abstract class DynamicEntity extends Entity {
 

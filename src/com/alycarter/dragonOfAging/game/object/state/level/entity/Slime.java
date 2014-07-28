@@ -2,7 +2,6 @@ package com.alycarter.dragonOfAging.game.object.state.level.entity;
 
 import com.alycarter.dragonOfAging.game.controls.Controls;
 import com.alycarter.dragonOfAging.game.graphics.AnimationTimer;
-import com.alycarter.dragonOfAging.game.graphics.FloatColor;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.math.Vector3;
 import com.alycarter.dragonOfAging.game.object.state.level.Level;
@@ -11,7 +10,7 @@ public class Slime extends DynamicEntity {
 
 	private float jumpDelay = 2;
 	
-	public Slime(Level level, Vector3 position, FloatColor color) 	{
+	public Slime(Level level, Vector3 position) 	{
 		super(level,"slime", ENEMY_TYPE, position, 0.7f, 0.3f, 1.0f, 1.0f, 1.0f,true,5,true, 0.25f);
 		getSprite().appendFrameLayer(level.getTiledTexture("slime"));
 		//normal
@@ -30,7 +29,7 @@ public class Slime extends DynamicEntity {
 		//jumping stuff
 		switch (getSprite().getCurrentAnimationTimerID()) {
 		case 0:
-			if(isGrounded() && jumpDelay < 0){
+			if(isGrounded() && jumpDelay < 0 && level.getPlayer().getPosition().distanceTo(getPosition())< 10){
 				//start the squash animation
 				getSprite().setCurrentAnimationTimer(1, true);
 				jumpDelay = 2+(float)Math.random();
