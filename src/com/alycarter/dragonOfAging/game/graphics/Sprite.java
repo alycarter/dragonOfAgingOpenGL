@@ -137,6 +137,10 @@ public class Sprite {
 		return imageOffSet;
 	}
 	
+	public void setImageOffSet(float x, float y){
+		imageOffSet.setLocation(x, y);
+	}
+	
 	public void render(Graphics graphics, float worldPositionX, float worldPositionY, float depth){
 		float x = worldPositionX + imageOffSet.x;
 		float y = worldPositionY + imageOffSet.y;

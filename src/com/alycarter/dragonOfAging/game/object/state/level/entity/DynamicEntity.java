@@ -291,27 +291,28 @@ public abstract class DynamicEntity extends Entity {
 	}
 	
 	@Override
-	public void takeDamage(Entity e, float damage) {
+	public void takeDamage(Level level, Entity e, float damage) {
 		if(takesDamage && damageCoolDown <= 0){
+			onDamage(level, e);
 			health -= damage;
 			triggerDamageCoolDown();
 			if(health <=0){
 				health = 0;
-				kill();
+				kill(level);
 			}
 		}
 	}
 	
-	public void onDamage(Entity e){
+	public void onDamage(Level level, Entity e){
 		
 	}
 	
-	public void kill(){
-		onDeath();
+	public void kill(Level level){
+		markForRemoval();
+		onDeath(level);
 	}
 	
-	public void onDeath(){
-		markForRemoval();
+	public void onDeath(Level level){
 	}
 	
 	public boolean isDead(){

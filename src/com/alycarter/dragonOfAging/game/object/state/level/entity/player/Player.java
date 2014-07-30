@@ -123,13 +123,14 @@ public class Player extends DynamicEntity {
 
 
 	@Override
-	public void takeDamage(Entity e, float damage) {
+	public void takeDamage(Level level, Entity e, float damage) {
 		if(doesTakedamage() && getDamageCoolDown() <= 0){
+			onDamage(level, e);
 			setHealth(getHealth() - (damage+(damage * itemManager.getDamageResitanceModifier())));
 			triggerDamageCoolDown();
 			if(getHealth() <=0){
 				setHealth(0);
-				kill();
+				kill(level);
 			}
 		}
 	}

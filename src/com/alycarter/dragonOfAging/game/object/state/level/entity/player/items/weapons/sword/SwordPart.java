@@ -47,12 +47,12 @@ public class SwordPart extends Entity {
 	@Override
 	public void onCollision(Level level, Entity e) {
 		if(e.getEntityType() == ENEMY_TYPE){
-			e.takeDamage(level.getPlayer(), damage);
+			e.takeDamage(level, level.getPlayer(), damage);
 		}
 	}
 
 	@Override
-	public void takeDamage(Entity e, float damage) {
+	public void takeDamage(Level level, Entity e, float damage) {
 		
 	}
 

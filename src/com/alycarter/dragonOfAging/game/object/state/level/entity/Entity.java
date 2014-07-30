@@ -78,5 +78,5 @@ public abstract class Entity extends GameObject {
 	
 	public abstract void onCollision(Level level, Entity e);
 	
-	public abstract void takeDamage(Entity e, float damage);
+	public abstract void takeDamage(Level level, Entity e, float damage);
 }

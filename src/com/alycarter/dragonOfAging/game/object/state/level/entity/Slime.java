@@ -90,7 +90,7 @@ public class Slime extends DynamicEntity {
 	public void onCollision(Level level, Entity e) {
 		super.onCollision(level, e);
 		if(e.getEntityType().equals(PLAYER_TYPE)){
-			e.takeDamage(e, 1);
+			e.takeDamage(level, e, 1);
 		}
 	}
 

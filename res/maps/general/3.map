@@ -1,17 +1,6 @@
 7
 7
 0
-1
-0.0
-0.0
-
-true
-false
-
-
-false
-false
-0
 2
 0.0
 0.0
@@ -44,35 +33,13 @@ false
 
 false
 false
-0
-5
-0.0
-0.0
-
-true
-false
-
-
-false
-false
-1
-0
-0.0
-0.0
-
-true
-false
-
-
-false
-false
 1
 1
-0.0
-0.0
+0.4375
+0.4375
 
 true
-false
+true
 
 
 false
@@ -112,22 +79,11 @@ false
 false
 1
 5
-0.0
-0.0
+0.4375
+0.4375
 
 true
-false
-
-
-false
-false
-1
-6
-0.0
-0.0
-
 true
-false
 
 
 false
@@ -156,11 +112,11 @@ false
 false
 2
 2
-0.0
-0.0
+0.4375
+0.4375
 
 true
-false
+true
 
 
 false
@@ -178,11 +134,11 @@ false
 false
 2
 4
-0.0
-0.0
+0.4375
+0.4375
 
 true
-false
+true
 
 
 false
@@ -249,9 +205,9 @@ false
 
 true
 true
+0
 
-
-true
+false
 false
 3
 4
@@ -310,11 +266,11 @@ false
 false
 4
 2
-0.0
-0.0
+0.4375
+0.4375
 
 true
-false
+true
 
 
 false
@@ -332,11 +288,11 @@ false
 false
 4
 4
-0.0
-0.0
+0.4375
+0.4375
 
 true
-false
+true
 
 
 false
@@ -364,23 +320,12 @@ false
 false
 false
 5
-0
-0.0
-0.0
-
-true
-false
-
-
-false
-false
-5
 1
-0.0
-0.0
+0.4375
+0.4375
 
 true
-false
+true
 
 
 false
@@ -420,33 +365,11 @@ false
 false
 5
 5
-0.0
-0.0
+0.4375
+0.4375
 
 true
-false
-
-
-false
-false
-5
-6
-0.0
-0.0
-
 true
-false
-
-
-false
-false
-6
-1
-0.0
-0.0
-
-true
-false
 
 
 false
@@ -475,17 +398,6 @@ false
 false
 6
 4
-0.0
-0.0
-
-true
-false
-
-
-false
-false
-6
-5
 0.0
 0.0
 

@@ -13,6 +13,7 @@ import com.alycarter.dragonOfAging.game.controls.Controls;
 import com.alycarter.dragonOfAging.game.graphics.Graphics;
 import com.alycarter.dragonOfAging.game.graphics.TiledTexture;
 import com.alycarter.dragonOfAging.game.object.state.State;
+import com.alycarter.dragonOfAging.game.object.state.level.entity.AirSpawner;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.Entity;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.Fire;
 import com.alycarter.dragonOfAging.game.object.state.level.entity.ItemPickUp;
@@ -45,7 +46,8 @@ public class Level extends State {
 	
 	private static final int MAP_DEFAULT_WIDTH = 400;
 	private static final int MAP_DEFAULT_HEIGHT = 400;
-	private static final int MAP_DEFAULT_ROOMS = 30;	
+	private static final int MAP_DEFAULT_ROOMS = 15;	
+	private static final int MAP_DEFAULT_ITEMS = 5;
 
 	//amount of time the last frame took
 	private float deltaTime;
@@ -73,29 +75,29 @@ public class Level extends State {
 	private void loadLevel(long seed){
 		Random random = new Random(seed);
 		if(!map.isInisialised()){
-			map.genMap(LevelType.FOREST_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
+			map.genMap(LevelType.FOREST_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, MAP_DEFAULT_ITEMS, random);
 		}else{
 			switch (map.getLevelType().getLevelName()){
 			case LevelType.FOREST_NAME:
-				map.genMap(LevelType.LAVA_LEVEL,MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
+				map.genMap(LevelType.LAVA_LEVEL,MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, MAP_DEFAULT_ITEMS, random);
 				break;
 			case LevelType.LAVA_NAME:
-				map.genMap(LevelType.CAVE_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
+				map.genMap(LevelType.CAVE_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, MAP_DEFAULT_ITEMS, random);
 				break;
 			case LevelType.CAVE_NAME:
-				map.genMap(LevelType.DESERT_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
+				map.genMap(LevelType.DESERT_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, MAP_DEFAULT_ITEMS, random);
 				break;
 			case LevelType.DESERT_NAME:
-				map.genMap(LevelType.SNOW_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
+				map.genMap(LevelType.SNOW_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, MAP_DEFAULT_ITEMS, random);
 				break;
 			case LevelType.SNOW_NAME:
-				map.genMap(LevelType.DUNGEON_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
+				map.genMap(LevelType.DUNGEON_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, MAP_DEFAULT_ITEMS, random);
 				break;
 			case LevelType.DUNGEON_NAME:
-				map.genMap(LevelType.FOREST_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
+				map.genMap(LevelType.FOREST_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, MAP_DEFAULT_ITEMS, random);
 				break;
 			default:
-				map.genMap(LevelType.FOREST_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, random);
+				map.genMap(LevelType.FOREST_LEVEL, MAP_DEFAULT_WIDTH, MAP_DEFAULT_HEIGHT, MAP_DEFAULT_ROOMS, MAP_DEFAULT_ITEMS, random);
 				break;
 			}
 		}
@@ -104,6 +106,7 @@ public class Level extends State {
 		entities.add(player);
 		player.updateAge();
 		player.getPosition().set(map.getPlayerSpawnLocation());
+		entities.add(new AirSpawner(this, player.getPosition().getX(), player.getPosition().getY()-1, map.getHeight((int)player.getPosition().getX(), (int)player.getPosition().getY())));
 		camera = new Camera(player.getPosition());
 		while(map.getEnemySpawnLocations().size()>0){
 			entities.add(new Slime(this, map.getNextEnemySpawnPosition(random)));				
@@ -128,6 +131,8 @@ public class Level extends State {
 			tilesTextures.add(new TiledTexture(graphics, this, "shadow", ImageIO.read(Level.class.getResource("/shadow.png")), 16, 16));
 			tilesTextures.add(new TiledTexture(graphics, this, "sword", ImageIO.read(Level.class.getResource("/sword.png")), 12, 12));
 			tilesTextures.add(new TiledTexture(graphics, this, "fire", ImageIO.read(Level.class.getResource("/fire.png")), 16, 16));
+			tilesTextures.add(new TiledTexture(graphics, this, "bird", ImageIO.read(Level.class.getResource("/bird.png")), 16, 16));
+			tilesTextures.add(new TiledTexture(graphics, this, "airSpawner", ImageIO.read(Level.class.getResource("/airSpawner.png")), 16, 16));
 		} catch (IOException e) {e.printStackTrace();}
 	}
 

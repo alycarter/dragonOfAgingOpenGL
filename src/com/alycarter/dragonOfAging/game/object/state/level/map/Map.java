@@ -43,16 +43,21 @@ public class Map {
 		roomManager.loadRoomLayouts();
 	}
 	
-	public void genMap(LevelType levelType, int width, int height, int rooms, Random random){
+	public void genMap(LevelType levelType, int width, int height, int rooms, int items, Random random){
 		this.levelType = levelType;
 		clearLocations();
 		size = new Point(width, height);
 		resetMapTiles(random);
 		ArrayList<Node> openNodes = new ArrayList<Node>();
 		openNodes.add(new Node(new Point(width/2, height/2), RIGHT));
+		genRoom(openNodes, random, roomManager.getRoom(random, Room.TYPE_START));
 		for(int i =0 ; i <rooms; i++){
-			genRoom(openNodes, random, roomManager.getRoom(random));
+			genRoom(openNodes, random, roomManager.getRoom(random, Room.TYPE_GENERAL));
 		}
+		for(int i =0 ; i <items; i++){
+			genRoom(openNodes, random, roomManager.getRoom(random, Room.TYPE_ITEM));
+		}
+		genRoom(openNodes, random, roomManager.getRoom(random, Room.TYPE_END));
 		inisialised = true;
 	}
 	

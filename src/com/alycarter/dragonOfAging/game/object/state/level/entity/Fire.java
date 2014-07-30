@@ -51,12 +51,12 @@ public class Fire extends Entity {
 
 	@Override
 	public void onCollision(Level level, Entity e) {
-		e.takeDamage(this, 1);
+		e.takeDamage(level, this, 1);
 
 	}
 
 	@Override
-	public void takeDamage(Entity e, float damage) {
+	public void takeDamage(Level level, Entity e, float damage) {
 		// TODO Auto-generated method stub
 
 	}

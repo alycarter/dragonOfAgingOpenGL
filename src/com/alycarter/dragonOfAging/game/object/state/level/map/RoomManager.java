@@ -8,10 +8,10 @@ import java.util.Random;
 
 public class RoomManager {
 
-	private ArrayList<Room> rooms;
+	private ArrayList<ArrayList<Room>> rooms;
 	
 	public RoomManager() {
-		rooms = new ArrayList<Room>();
+		rooms = new ArrayList<ArrayList<Room>>();
 	}
 	
 	public void loadRoomLayouts(){
@@ -19,23 +19,37 @@ public class RoomManager {
 		try {
 			String value = reader.readLine();
 			while(!value.equals("eof")){
-				loadRoomFolder(value, Integer.valueOf(reader.readLine()));
+				ArrayList<Room> roomList = new ArrayList<Room>();
+				loadRoomFolder(value, Integer.valueOf(reader.readLine()), roomList);
+				if(!roomList.isEmpty()){
+					rooms.add(roomList);
+				}
 				value = reader.readLine();
 			}
 			reader.close();
 		} catch (IOException e) {e.printStackTrace();}
 	}
 	
-	private void loadRoomFolder(String folderName, int roomCount){		
+	private void loadRoomFolder(String folderName, int roomCount, ArrayList<Room> roomList){		
 		for(int i =0 ; i < roomCount; i++){
 			Room room = new Room(folderName);
 			room.loadRoom("/maps/"+folderName+"/"+i+".map");
-			rooms.add(room);
+			roomList.add(room);
 		}
 	}
 	
-	public Room getRoom(Random random){
-		return rooms.get((int) (random.nextFloat()*rooms.size()));
+	public Room getRoom(Random random, String roomType){
+		boolean found  = false;
+		int i = 0;
+		Room room = null;
+		while(i < rooms.size() && !found){
+			if(rooms.get(i).get(0).getRoomType().equals(roomType)){
+				found = true;
+				room = rooms.get(i).get((int) (random.nextFloat()*rooms.get(i).size()));
+			}
+			i++;
+		}
+		return room;
 	}
 
 }
